@@ -120,10 +120,6 @@ const Home = () => {
               <div className="text-5xl font-bold bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent mb-3">0</div>
               <div className="text-gray-300">Games Played</div>
             </div>
-            <div className="text-center bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-              <div className="text-5xl font-bold bg-gradient-to-r from-rose-400 to-pink-400 bg-clip-text text-transparent mb-3">TBD</div>
-              <div className="text-gray-300">Current Sacko</div>
-            </div>
           </div>
         </div>
       </div>
