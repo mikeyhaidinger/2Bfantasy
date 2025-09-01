@@ -58,7 +58,7 @@ const Home = () => {
             </h1>
             <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 max-w-4xl mx-auto border border-white/20 shadow-2xl">
               <img
-                src="https://images.pexels.com/photos/1618269/pexels-photo-1618269.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                src="/images/barn-draft.jpg"
                 alt="2B Fantasy Football League Members"
                 className="w-full h-64 md:h-80 object-cover rounded-2xl shadow-2xl"
               />
