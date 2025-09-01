@@ -62,7 +62,7 @@ const Home = () => {
                 alt="2B Fantasy Football League Members"
                 className="w-full h-64 md:h-80 object-cover rounded-2xl shadow-2xl"
               />
-              <p className="text-lg mt-4 text-white/80">The 2B Fantasy Football League Champions</p>
+              <p className="text-lg mt-4 text-white/80">2025 Barn Draft</p>
             </div>
           </div>
         </div>
