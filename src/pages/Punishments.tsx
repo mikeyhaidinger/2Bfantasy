@@ -73,8 +73,8 @@ const Punishments = () => {
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/50">
           <div className="bg-gradient-to-r from-rose-600 to-pink-600 px-6 py-4">
             <h2 className="text-2xl font-bold text-white flex items-center">
-              <Skull className="h-6 w-6 mr-2" />
-              Available Punishments
+              <Calendar className="h-6 w-6 mr-2" />
+              Sacko History
             </h2>
           </div>
           <div className="p-6">
@@ -130,7 +130,7 @@ const Punishments = () => {
                       ? 'border-red-200 bg-gradient-to-r from-red-50 to-red-100 hover:from-red-100 hover:to-red-150' 
                       : sacko.team === 'Stefan'
                       ? 'border-yellow-200 bg-gradient-to-r from-yellow-50 to-yellow-100 hover:from-yellow-100 hover:to-yellow-150'
-                     : 'border-green-200 bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-150'
+                    : 'border-green-200 bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-150'
                   }`}>
                     <div className="flex items-center space-x-4">
                       <div className="bg-gradient-to-r from-gray-600 to-slate-600 text-white rounded-2xl w-12 h-12 flex items-center justify-center font-bold shadow-lg">
@@ -141,12 +141,9 @@ const Punishments = () => {
                     <div className="text-right">
                       <div className="font-medium text-gray-700">{sacko.punishment}</div>
                       {sacko.team === 'Corazza' && (
-                        <div className="text-sm text-red-600 font-medium">Didn't Complete Punishment</div>
+                    {sacko.team !== 'Stefan' && sacko.team !== 'Corazza' && (
                       )}
-                      {sacko.team !== 'Stefan' && sacko.team !== 'Corazza' && (
-                        <div className="text-sm text-gray-500">Completed punishment</div>
-                      )}
-                    </div>
+                    <div className="font-semibold text-gray-900">{sacko.team}</div>
                   </div>
                 ))}
               </div>
