@@ -141,9 +141,12 @@ const Punishments = () => {
                     <div className="text-right">
                       <div className="font-medium text-gray-700">{sacko.punishment}</div>
                       {sacko.team === 'Corazza' && (
-                    {sacko.team !== 'Stefan' && sacko.team !== 'Corazza' && (
+                        <div className="text-sm text-red-600 mt-1">Banished from the league</div>
                       )}
-                    <div className="font-semibold text-gray-900">{sacko.team}</div>
+                      {sacko.team === 'Stefan' && (
+                        <div className="text-sm text-yellow-600 mt-1">Before punishments existed</div>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
