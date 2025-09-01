@@ -125,19 +125,30 @@ const Punishments = () => {
             <div className="p-6">
               <div className="space-y-4">
                 {pastSackos.map((sacko, index) => (
-                  <div key={index} className="flex items-center justify-between p-6 border border-gray-200 rounded-2xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-white transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105">
+                  <div key={index} className={`flex items-center justify-between p-6 border rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 ${
+                    sacko.team === 'Corazza' 
+                      ? 'border-red-200 bg-gradient-to-r from-red-50 to-red-100 hover:from-red-100 hover:to-red-150' 
+                      : sacko.team === 'Stefan'
+                      ? 'border-yellow-200 bg-gradient-to-r from-yellow-50 to-yellow-100 hover:from-yellow-100 hover:to-yellow-150'
+                      : 'border-gray-200 hover:bg-gradient-to-r hover:from-gray-50 hover:to-white'
+                  }`}>
                     <div className="flex items-center space-x-4">
                       <div className="bg-gradient-to-r from-gray-600 to-slate-600 text-white rounded-2xl w-12 h-12 flex items-center justify-center font-bold shadow-lg">
                         {sacko.year}
                       </div>
                       <div>
                         <div className="font-semibold text-gray-900">{sacko.team}</div>
-                        <div className="text-sm text-gray-600">Sacko Champion</div>
+                        <div className="text-sm text-gray-600">Last Place</div>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="font-medium text-gray-700">{sacko.punishment}</div>
-                      <div className="text-sm text-gray-500">Completed punishment</div>
+                      {sacko.team === 'Corazza' && (
+                        <div className="text-sm text-red-600 font-medium">Didn't Complete Punishment</div>
+                      )}
+                      {sacko.team !== 'Stefan' && sacko.team !== 'Corazza' && (
+                        <div className="text-sm text-gray-500">Completed punishment</div>
+                      )}
                     </div>
                   </div>
                 ))}
