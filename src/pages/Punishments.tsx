@@ -136,10 +136,7 @@ const Punishments = () => {
                       <div className="bg-gradient-to-r from-gray-600 to-slate-600 text-white rounded-2xl w-12 h-12 flex items-center justify-center font-bold shadow-lg">
                         {sacko.year}
                       </div>
-                      <div>
-                        <div className="font-semibold text-gray-900">{sacko.team}</div>
-                        <div className="text-sm text-gray-600">Last Place</div>
-                      </div>
+                      <div className="font-semibold text-gray-900">{sacko.team}</div>
                     </div>
                     <div className="text-right">
                       <div className="font-medium text-gray-700">{sacko.punishment}</div>
