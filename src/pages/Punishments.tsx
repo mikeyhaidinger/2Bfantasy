@@ -32,7 +32,7 @@ const Punishments = () => {
   ];
 
   const currentSacko = {
-    name: 'Scammers',
+    name: 'Dave Voitek - Central Saudi Scammers',
     image: '/images/current-sacko.jpg'
   };
 
