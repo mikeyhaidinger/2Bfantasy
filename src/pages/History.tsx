@@ -153,7 +153,7 @@ const History = () => {
         </div>
 
         {/* Losingest Teams */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/50">
+        <div className="mt-16 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/50">
           <div className="bg-gradient-to-r from-red-600 to-rose-600 px-6 py-4">
             <h2 className="text-2xl font-bold text-white">Losingest Teams</h2>
           </div>
