@@ -79,6 +79,63 @@ const PowerRankings = () => {
   ]);
 
   const toggleWeek = (week: number) => {
+
+  // Initialize weeks 2-13 if they don't exist
+  React.useEffect(() => {
+    if (weeksData.length === 1) {
+      const additionalWeeks: WeekData[] = [];
+      for (let weekNum = 2; weekNum <= 13; weekNum++) {
+        additionalWeeks.push({
+          week: weekNum,
+          matchups: [
+            {
+              id: `${weekNum}-1`,
+              team1: 'Thunder Bolts',
+              team2: 'Grid Iron Giants',
+              writeup: 'Click edit to add commissioner analysis for this matchup...',
+              prediction: null
+            },
+            {
+              id: `${weekNum}-2`,
+              team1: 'Touchdown Titans',
+              team2: 'End Zone Eagles',
+              writeup: 'Click edit to add commissioner analysis for this matchup...',
+              prediction: null
+            },
+            {
+              id: `${weekNum}-3`,
+              team1: 'Blitz Brigade',
+              team2: 'Pigskin Pirates',
+              writeup: 'Click edit to add commissioner analysis for this matchup...',
+              prediction: null
+            },
+            {
+              id: `${weekNum}-4`,
+              team1: 'Gridiron Gladiators',
+              team2: 'Fantasy Falcons',
+              writeup: 'Click edit to add commissioner analysis for this matchup...',
+              prediction: null
+            },
+            {
+              id: `${weekNum}-5`,
+              team1: 'Scoreboard Slayers',
+              team2: 'Championship Chasers',
+              writeup: 'Click edit to add commissioner analysis for this matchup...',
+              prediction: null
+            },
+            {
+              id: `${weekNum}-6`,
+              team1: 'Victory Vipers',
+              team2: 'Dynasty Demons',
+              writeup: 'Click edit to add commissioner analysis for this matchup...',
+              prediction: null
+            }
+          ]
+        });
+      }
+      setWeeksData(prev => [...prev, ...additionalWeeks]);
+    }
+  }, [weeksData.length]);
     const newExpanded = new Set(expandedWeeks);
     if (newExpanded.has(week)) {
       newExpanded.delete(week);
