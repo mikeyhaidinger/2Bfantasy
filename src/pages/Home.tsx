@@ -56,9 +56,6 @@ const Home = () => {
             <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
               2B Fantasy Football
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-white/90 max-w-3xl mx-auto">
-              Your ultimate destination for league management, power rankings, and championship glory
-            </p>
             <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 max-w-4xl mx-auto border border-white/20 shadow-2xl">
               <img
                 src="https://images.pexels.com/photos/1618269/pexels-photo-1618269.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
