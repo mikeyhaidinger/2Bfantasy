@@ -78,7 +78,6 @@ const PowerRankings = () => {
     }
   ]);
 
-  const toggleWeek = (week: number) => {
 
   // Initialize weeks 2-13 if they don't exist
   React.useEffect(() => {
@@ -137,6 +136,7 @@ const PowerRankings = () => {
     }
   }, [weeksData.length]);
     const newExpanded = new Set(expandedWeeks);
+  const toggleWeek = (week: number) => {
     if (newExpanded.has(week)) {
       newExpanded.delete(week);
     } else {
