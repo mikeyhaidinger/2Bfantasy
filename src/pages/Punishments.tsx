@@ -130,7 +130,7 @@ const Punishments = () => {
                       ? 'border-red-200 bg-gradient-to-r from-red-50 to-red-100 hover:from-red-100 hover:to-red-150' 
                       : sacko.team === 'Stefan'
                       ? 'border-yellow-200 bg-gradient-to-r from-yellow-50 to-yellow-100 hover:from-yellow-100 hover:to-yellow-150'
-                      : 'border-gray-200 hover:bg-gradient-to-r hover:from-gray-50 hover:to-white'
+                     : 'border-green-200 bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-150'
                   }`}>
                     <div className="flex items-center space-x-4">
                       <div className="bg-gradient-to-r from-gray-600 to-slate-600 text-white rounded-2xl w-12 h-12 flex items-center justify-center font-bold shadow-lg">
