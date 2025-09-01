@@ -122,20 +122,68 @@ const History = () => {
           </div>
           <div className="p-6">
             <div className="space-y-4">
-              {['Thunder Bolts', 'Gridiron Gladiators', 'Dynasty Demons', 'Scoreboard Slayers', 'Fantasy Falcons'].map((team, index) => (
-                <div key={team} className="flex items-center justify-between p-6 border border-gray-200 rounded-2xl bg-gradient-to-r from-white to-gray-50 shadow-md hover:shadow-lg transition-all duration-300">
+              {[
+                { name: 'Thunder Bolts', championships: 1, runnerUps: 1, playoffAppearances: 4 },
+                { name: 'Gridiron Gladiators', championships: 1, runnerUps: 0, playoffAppearances: 3 },
+                { name: 'Dynasty Demons', championships: 1, runnerUps: 1, playoffAppearances: 4 },
+                { name: 'Scoreboard Slayers', championships: 1, runnerUps: 0, playoffAppearances: 2 },
+                { name: 'Fantasy Falcons', championships: 1, runnerUps: 1, playoffAppearances: 3 }
+              ].map((team, index) => (
+                <div key={team.name} className="flex items-center justify-between p-6 border border-gray-200 rounded-2xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-white transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105">
                   <div className="flex items-center space-x-4">
                     <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl w-12 h-12 flex items-center justify-center font-bold shadow-lg">
                       {index + 1}
                     </div>
-                    <span className="font-bold text-gray-900 text-lg">{team}</span>
+                    <span className="font-bold text-gray-900 text-lg">{team.name}</span>
                   </div>
                   <div className="text-right">
-                    <div className="font-bold text-gray-700 text-lg">
-                      {index === 0 ? '1 Championship' : index < 3 ? '1 Championship' : '0 Championships'}
+                    <div className="space-y-1">
+                      <div className="font-bold text-gray-700 text-lg">
+                        {team.championships} Championship{team.championships !== 1 ? 's' : ''}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {team.runnerUps} Runner-up{team.runnerUps !== 1 ? 's' : ''} • {team.playoffAppearances} Playoff{team.playoffAppearances !== 1 ? 's' : ''}
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-500">
-                      {Math.floor(Math.random() * 3) + 1} Runner-ups
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Losingest Teams */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/50">
+          <div className="bg-gradient-to-r from-red-600 to-rose-600 px-6 py-4">
+            <h2 className="text-2xl font-bold text-white">Losingest Teams</h2>
+          </div>
+          <div className="p-6">
+            <div className="space-y-4">
+              {[
+                { name: 'Grid Iron Giants', sackos: 1, sackoAppearances: 2 },
+                { name: 'End Zone Eagles', sackos: 1, sackoAppearances: 3 },
+                { name: 'Pigskin Pirates', sackos: 1, sackoAppearances: 2 },
+                { name: 'Blitz Brigade', sackos: 0, sackoAppearances: 2 },
+                { name: 'Championship Chasers', sackos: 0, sackoAppearances: 1 }
+              ].map((team, index) => (
+                <div key={team.name} className="flex items-center justify-between p-6 border border-gray-200 rounded-2xl hover:bg-gradient-to-r hover:from-red-50 hover:to-rose-50 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105">
+                  <div className="flex items-center space-x-4">
+                    <div className="bg-gradient-to-r from-red-600 to-rose-600 text-white rounded-2xl w-12 h-12 flex items-center justify-center font-bold shadow-lg">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900">{team.name}</div>
+                      <div className="text-sm text-gray-600">Hall of Shame</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="space-y-1">
+                      <div className="font-bold text-red-700 text-lg">
+                        {team.sackos} Sacko{team.sackos !== 1 ? 's' : ''}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {team.sackoAppearances} Sacko Appearance{team.sackoAppearances !== 1 ? 's' : ''}
+                      </div>
                     </div>
                   </div>
                 </div>
