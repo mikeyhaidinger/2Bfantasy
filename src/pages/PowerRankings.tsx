@@ -90,7 +90,7 @@ const PowerRankings = () => {
 
   const startEditing = (matchupId: string, currentText: string) => {
     setEditingMatchup(matchupId);
-    setEditText(currentText);
+    setEditText(currentText === 'Click edit to add commissioner analysis for this matchup...' ? '' : currentText);
   };
 
   const startEditingTeams = (matchupId: string, team1: string, team2: string) => {
@@ -358,8 +358,18 @@ const PowerRankings = () => {
                           </div>
                         ) : (
                           <div className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-6 border border-gray-100 shadow-inner">
-                            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                              {matchup.writeup}
+                            <p 
+                              className="text-gray-700 leading-relaxed whitespace-pre-wrap cursor-pointer hover:bg-gray-50 rounded-lg p-3 transition-colors duration-200 min-h-[60px] flex items-center"
+                              onClick={() => startEditing(matchup.id, '')}
+                            >
+                              {matchup.writeup === 'Click edit to add commissioner analysis for this matchup...' 
+                                ? (
+                                  <span className="text-gray-400 italic">
+                                    Click here to add commissioner analysis for this matchup...
+                                  </span>
+                                ) 
+                                : matchup.writeup
+                              }
                             </p>
                           </div>
                         )}
