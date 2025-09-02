@@ -45,31 +45,31 @@ const Home = () => {
       const tradeDeadlineValue = tradeDeadline ? new Date(tradeDeadline).toISOString() : null;
       const keeperDeadlineValue = keeperDeadline ? new Date(keeperDeadline).toISOString() : null;
 
-      // Upsert trade deadline (using exact same logic as keeper)
-      const { data: tradeData, error: tradeError } = await supabase
+      // Upsert trade deadline - this will insert if not exists, update if exists
+      const { error: tradeError } = await supabase
         .from('deadlines')
         .upsert({
           type: 'trade',
           deadline: tradeDeadlineValue,
           updated_at: new Date().toISOString()
         }, {
-          onConflict: 'type'
-        })
-        .select();
+          onConflict: 'type',
+          ignoreDuplicates: false
+        });
 
       if (tradeError) throw tradeError;
 
-      // Upsert keeper deadline (same logic)
-      const { data: keeperData, error: keeperError } = await supabase
+      // Upsert keeper deadline - this will insert if not exists, update if exists
+      const { error: keeperError } = await supabase
         .from('deadlines')
         .upsert({
           type: 'keeper',
           deadline: keeperDeadlineValue,
           updated_at: new Date().toISOString()
         }, {
-          onConflict: 'type'
-        })
-        .select();
+          onConflict: 'type',
+          ignoreDuplicates: false
+        });
 
       if (keeperError) throw keeperError;
 
