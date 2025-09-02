@@ -480,7 +480,7 @@ const PowerRankings = () => {
           <p className="text-indigo-700 leading-relaxed">
             Click on team names to edit matchups, use the "Predict" button to add your win predictions with point margins, 
             and use "Edit" to add detailed analysis for each matchup. ESPN integration coming soon for automatic matchup imports.
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-red-600 bg-clip-text text-transparent mb-4">Power Rankings</h1>
+          </p>
         </div>
       </div>
     </div>

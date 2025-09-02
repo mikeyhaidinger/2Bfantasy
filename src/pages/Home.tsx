@@ -197,7 +197,6 @@ const Home = () => {
                     <Icon className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600 group-hover:bg-clip-text transition-all duration-300">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-red-600 group-hover:bg-clip-text transition-all duration-300">
                     {link.title}
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-sm">
