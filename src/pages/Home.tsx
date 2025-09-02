@@ -42,10 +42,16 @@ const Home = () => {
     try {
       setLoading(true);
       
-      // Handle trade deadline
-      const tradeDeadlineValue = tradeDeadline ? new Date(tradeDeadline).toISOString() : null;
+      console.log('Raw trade deadline input:', tradeDeadline);
+      console.log('Raw keeper deadline input:', keeperDeadline);
       
-      console.log('Saving trade deadline:', tradeDeadlineValue);
+      // Handle trade deadline - only convert if we have a value
+      let tradeDeadlineValue = null;
+      if (tradeDeadline && tradeDeadline.trim() !== '') {
+        tradeDeadlineValue = new Date(tradeDeadline).toISOString();
+      }
+      
+      console.log('Processed trade deadline:', tradeDeadlineValue);
       
       const { error: tradeError } = await supabase
         .from('deadlines')
@@ -62,10 +68,13 @@ const Home = () => {
         throw tradeError;
       }
 
-      // Handle keeper deadline
-      const keeperDeadlineValue = keeperDeadline ? new Date(keeperDeadline).toISOString() : null;
+      // Handle keeper deadline - only convert if we have a value
+      let keeperDeadlineValue = null;
+      if (keeperDeadline && keeperDeadline.trim() !== '') {
+        keeperDeadlineValue = new Date(keeperDeadline).toISOString();
+      }
       
-      console.log('Saving keeper deadline:', keeperDeadlineValue);
+      console.log('Processed keeper deadline:', keeperDeadlineValue);
       
       const { error: keeperError } = await supabase
         .from('deadlines')
@@ -85,11 +94,13 @@ const Home = () => {
       console.log('Deadlines saved successfully');
       setIsEditing(false);
       
-      // Reload the deadlines to confirm they were saved
-      await loadDeadlines();
+      // Small delay then reload to ensure database has updated
+      setTimeout(() => {
+        loadDeadlines();
+      }, 500);
     } catch (error) {
       console.error('Error saving deadlines:', error);
-      alert('Failed to save deadlines. Please check the console for details.');
+      alert(`Failed to save deadlines: ${error.message || error}`);
     } finally {
       setLoading(false);
     }
