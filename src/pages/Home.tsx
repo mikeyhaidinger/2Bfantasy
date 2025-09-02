@@ -93,14 +93,12 @@ const Home = () => {
 
       console.log('Deadlines saved successfully');
       setIsEditing(false);
-      
-      // Small delay then reload to ensure database has updated
-      setTimeout(() => {
-        loadDeadlines();
-      }, 500);
+      alert('Deadlines saved successfully!');
     } catch (error) {
       console.error('Error saving deadlines:', error);
       alert(`Failed to save deadlines: ${error.message || error}`);
+      // Only reload on error to restore original values
+      loadDeadlines();
     } finally {
       setLoading(false);
     }
@@ -184,7 +182,7 @@ const Home = () => {
                     <button
                       onClick={() => {
                         setIsEditing(false);
-                        loadDeadlines();
+                        loadDeadlines(); // Restore original values when canceling
                       }}
                       className="flex items-center space-x-1 px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors duration-200"
                     >
