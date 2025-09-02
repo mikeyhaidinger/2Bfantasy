@@ -45,6 +45,8 @@ const Home = () => {
       // Handle trade deadline
       const tradeDeadlineValue = tradeDeadline ? new Date(tradeDeadline).toISOString() : null;
       
+      console.log('Saving trade deadline:', tradeDeadlineValue);
+      
       const { error: tradeError } = await supabase
         .from('deadlines')
         .upsert({
@@ -55,10 +57,15 @@ const Home = () => {
           onConflict: 'type'
         });
       
-      if (tradeError) throw tradeError;
+      if (tradeError) {
+        console.error('Trade deadline error:', tradeError);
+        throw tradeError;
+      }
 
       // Handle keeper deadline
       const keeperDeadlineValue = keeperDeadline ? new Date(keeperDeadline).toISOString() : null;
+      
+      console.log('Saving keeper deadline:', keeperDeadlineValue);
       
       const { error: keeperError } = await supabase
         .from('deadlines')
@@ -70,11 +77,19 @@ const Home = () => {
           onConflict: 'type'
         });
       
-      if (keeperError) throw keeperError;
+      if (keeperError) {
+        console.error('Keeper deadline error:', keeperError);
+        throw keeperError;
+      }
 
+      console.log('Deadlines saved successfully');
       setIsEditing(false);
+      
+      // Reload the deadlines to confirm they were saved
+      await loadDeadlines();
     } catch (error) {
       console.error('Error saving deadlines:', error);
+      alert('Failed to save deadlines. Please check the console for details.');
     } finally {
       setLoading(false);
     }
