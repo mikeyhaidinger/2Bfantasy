@@ -1,8 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { TrendingUp, FileText, Calendar, Zap, Trophy as TrophyIcon } from 'lucide-react';
+import { TrendingUp, FileText, Calendar, Zap, Trophy as TrophyIcon, Clock, Save } from 'lucide-react';
 
 const Home = () => {
+  const [tradeDeadline, setTradeDeadline] = React.useState('2025-11-15T23:59');
+  const [keeperDeadline, setKeeperDeadline] = React.useState('2025-08-15T23:59');
+  const [isEditing, setIsEditing] = React.useState(false);
+
   const quickLinks = [
     {
       title: 'Power Rankings',
@@ -70,6 +74,78 @@ const Home = () => {
 
       {/* Quick Links */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* Deadlines Section */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">
+            Deadlines
+          </h2>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/50 max-w-4xl mx-auto">
+            <div className="bg-gradient-to-r from-orange-600 to-red-600 px-6 py-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold text-white flex items-center">
+                  <Clock className="h-5 w-5 mr-2" />
+                  Important Dates
+                </h3>
+                <button
+                  onClick={() => setIsEditing(!isEditing)}
+                  className="flex items-center space-x-2 px-3 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200"
+                >
+                  {isEditing ? <Save className="h-4 w-4" /> : <Calendar className="h-4 w-4" />}
+                  <span>{isEditing ? 'Save' : 'Edit'}</span>
+                </button>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                  <h4 className="text-lg font-bold text-blue-900 mb-3">Trade Deadline</h4>
+                  {isEditing ? (
+                    <input
+                      type="datetime-local"
+                      value={tradeDeadline}
+                      onChange={(e) => setTradeDeadline(e.target.value)}
+                      className="w-full p-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  ) : (
+                    <p className="text-blue-800 text-lg font-semibold">
+                      {new Date(tradeDeadline).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  )}
+                </div>
+                <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-200">
+                  <h4 className="text-lg font-bold text-emerald-900 mb-3">Keeper Deadline</h4>
+                  {isEditing ? (
+                    <input
+                      type="datetime-local"
+                      value={keeperDeadline}
+                      onChange={(e) => setKeeperDeadline(e.target.value)}
+                      className="w-full p-3 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    />
+                  ) : (
+                    <p className="text-emerald-800 text-lg font-semibold">
+                      {new Date(keeperDeadline).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit'
+                      })}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
           League Central
         </h2>
