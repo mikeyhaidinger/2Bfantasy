@@ -127,42 +127,16 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      {/* Hero Section */}
-      <div className="relative h-96 bg-gradient-to-r from-red-600 via-red-700 to-red-800 overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="/images/barn-draft.jpg"
-            alt="2B Fantasy Football League"
-            className="w-full h-full object-cover opacity-30"
-            onError={(e) => {
-              e.currentTarget.src = 'https://images.pexels.com/photos/158826/structure-light-ceiling-architecture-158826.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
-            }}
-          />
-        </div>
-        <div className="relative z-10 flex items-center justify-center h-full">
-          <div className="text-center">
-            <h1 className="text-6xl font-bold text-white mb-4 drop-shadow-2xl">
-              2B Fantasy Football
-            </h1>
-            <p className="text-2xl text-red-100 mb-8 drop-shadow-lg">
-              Where legends are made and friendships are tested
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link
-                to="/power-rankings"
-                className="bg-white text-red-600 px-8 py-3 rounded-full font-bold text-lg hover:bg-red-50 transition-all duration-300 transform hover:scale-105 shadow-xl"
-              >
-                Power Rankings
-              </Link>
-              <Link
-                to="/draft"
-                className="bg-red-500 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-red-400 transition-all duration-300 transform hover:scale-105 shadow-xl border-2 border-white"
-              >
-                2025 Draft
-              </Link>
-            </div>
-          </div>
-        </div>
+      {/* Full Barn Draft Image */}
+      <div className="w-full">
+        <img
+          src="/images/barn-draft.jpg"
+          alt="Barn Draft - 2B Fantasy Football League"
+          className="w-full h-auto object-cover"
+          onError={(e) => {
+            e.currentTarget.src = 'https://images.pexels.com/photos/158826/structure-light-ceiling-architecture-158826.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
+          }}
+        />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
