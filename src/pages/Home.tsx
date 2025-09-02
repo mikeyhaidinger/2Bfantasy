@@ -108,10 +108,11 @@ const Home = () => {
       icon: Zap,
       path: '/trades',
       color: 'bg-gradient-to-br from-orange-500 to-orange-600'
-    },
-    {
-      </div>
+    }
+  ];
 
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Deadlines Section */}
         <div className="bg-white rounded-2xl shadow-xl mb-12 overflow-hidden border border-gray-200">
