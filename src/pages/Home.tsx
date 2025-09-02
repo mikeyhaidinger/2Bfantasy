@@ -131,7 +131,7 @@ const Home = () => {
               />
             </div>
           </div>
-          <p className="text-2xl font-semibold text-gray-700">2025 Barn Draft</p>
+          <p className="text-2xl font-semibold text-gray-200">2025 Barn Draft</p>
         </div>
       </div>
 
