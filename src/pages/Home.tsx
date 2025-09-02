@@ -120,7 +120,7 @@ const Home = () => {
             2B Fantasy Football
           </h1>
           <div className="flex justify-center mb-6">
-            <div className="bg-white rounded-2xl shadow-xl p-4 border border-white/50">
+            <div className="bg-white rounded-2xl shadow-xl p-4 border-4 border-purple-400">
               <img
                 src="/images/barn-draft.jpg"
                 alt="2B Fantasy Football Barn Draft"
