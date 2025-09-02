@@ -116,7 +116,6 @@ const Home = () => {
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-red-600 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-red-600 bg-clip-text text-transparent mb-12">
           <h1 className="text-5xl font-bold text-white mb-12">
             2B Fantasy Football
           </h1>
