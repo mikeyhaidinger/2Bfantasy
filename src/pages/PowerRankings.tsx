@@ -375,7 +375,7 @@ const PowerRankings = () => {
                           <div className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-6 border border-gray-100 shadow-inner">
                             <p 
                               className="text-gray-700 leading-relaxed whitespace-pre-wrap cursor-pointer hover:bg-gray-50 rounded-lg p-3 transition-colors duration-200 min-h-[60px] flex items-center"
-                              onClick={() => startEditing(matchup.id, '')}
+                              onClick={() => startEditing(matchup.id, matchup.writeup)}
                             >
                               {matchup.writeup === 'Click edit to add commissioner analysis for this matchup...' 
                                 ? (
