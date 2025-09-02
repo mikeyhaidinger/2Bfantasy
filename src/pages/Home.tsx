@@ -42,39 +42,88 @@ const Home = () => {
     try {
       setLoading(true);
       
-      // Update trade deadline
+      // First, try to get existing deadlines
+      const { data: existingDeadlines, error: fetchError } = await supabase
+        .from('deadlines')
+        .select('*');
+      
+      if (fetchError) {
+        console.error('Error fetching existing deadlines:', fetchError);
+        throw new Error(`Database fetch error: ${fetchError.message}`);
+      }
+
+      // Update or insert trade deadline
       const tradeDeadlineValue = tradeDeadline ? new Date(tradeDeadline).toISOString() : null;
-      const { error: tradeError } = await supabase
-        .from('deadlines')
-        .upsert({
-          type: 'trade',
-          deadline: tradeDeadlineValue,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'type'
-        });
+      const existingTrade = existingDeadlines?.find(d => d.type === 'trade');
+      
+      if (existingTrade) {
+        const { error: tradeError } = await supabase
+          .from('deadlines')
+          .update({
+            deadline: tradeDeadlineValue,
+            updated_at: new Date().toISOString()
+          })
+          .eq('type', 'trade');
+        
+        if (tradeError) {
+          console.error('Error updating trade deadline:', tradeError);
+          throw new Error(`Trade deadline update error: ${tradeError.message}`);
+        }
+      } else {
+        const { error: tradeError } = await supabase
+          .from('deadlines')
+          .insert({
+            type: 'trade',
+            deadline: tradeDeadlineValue,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+        
+        if (tradeError) {
+          console.error('Error inserting trade deadline:', tradeError);
+          throw new Error(`Trade deadline insert error: ${tradeError.message}`);
+        }
+      }
 
-      if (tradeError) throw tradeError;
-
-      // Update keeper deadline
+      // Update or insert keeper deadline
       const keeperDeadlineValue = keeperDeadline ? new Date(keeperDeadline).toISOString() : null;
-      const { error: keeperError } = await supabase
-        .from('deadlines')
-        .upsert({
-          type: 'keeper',
-          deadline: keeperDeadlineValue,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'type'
-        });
-
-      if (keeperError) throw keeperError;
+      const existingKeeper = existingDeadlines?.find(d => d.type === 'keeper');
+      
+      if (existingKeeper) {
+        const { error: keeperError } = await supabase
+          .from('deadlines')
+          .update({
+            deadline: keeperDeadlineValue,
+            updated_at: new Date().toISOString()
+          })
+          .eq('type', 'keeper');
+        
+        if (keeperError) {
+          console.error('Error updating keeper deadline:', keeperError);
+          throw new Error(`Keeper deadline update error: ${keeperError.message}`);
+        }
+      } else {
+        const { error: keeperError } = await supabase
+          .from('deadlines')
+          .insert({
+            type: 'keeper',
+            deadline: keeperDeadlineValue,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+        
+        if (keeperError) {
+          console.error('Error inserting keeper deadline:', keeperError);
+          throw new Error(`Keeper deadline insert error: ${keeperError.message}`);
+        }
+      }
 
       setIsEditing(false);
       console.log('Deadlines saved successfully');
+      alert('Deadlines saved successfully!');
     } catch (error) {
       console.error('Error saving deadlines:', error);
-      alert('Failed to save deadlines. Please try again.');
+      alert(`Failed to save deadlines: ${error.message}. Please check the console for more details.`);
     } finally {
       setLoading(false);
     }
