@@ -124,7 +124,7 @@ const Home = () => {
               <img
                 src="/images/barn-draft.jpg"
                 alt="2B Fantasy Football Barn Draft"
-                className="w-96 h-64 object-cover rounded-xl"
+                className="w-[600px] h-96 object-cover rounded-xl"
                 onError={(e) => {
                   e.currentTarget.src = 'https://images.pexels.com/photos/1260727/pexels-photo-1260727.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
                 }}
