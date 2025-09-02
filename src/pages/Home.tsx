@@ -46,9 +46,18 @@ const Home = () => {
     try {
       setLoading(true);
       
-      // Save as EST - store exactly what user entered
-      const tradeDeadlineValue = tradeDeadline ? new Date(tradeDeadline).toISOString() : null;
-      const keeperDeadlineValue = keeperDeadline ? new Date(keeperDeadline).toISOString() : null;
+      // Subtract 5 hours from entered time to store as UTC (EST - 5 hours = UTC)
+      const tradeDeadlineValue = tradeDeadline ? (() => {
+        const date = new Date(tradeDeadline);
+        date.setHours(date.getHours() - 5);
+        return date.toISOString();
+      })() : null;
+      
+      const keeperDeadlineValue = keeperDeadline ? (() => {
+        const date = new Date(keeperDeadline);
+        date.setHours(date.getHours() - 5);
+        return date.toISOString();
+      })() : null;
 
       // Upsert trade deadline - this will insert if not exists, update if exists
       const { error: tradeError } = await supabase
