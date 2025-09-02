@@ -96,7 +96,7 @@ const PowerRankings = () => {
 
   const startEditing = (matchupId: string, currentText: string) => {
     setEditingMatchup(matchupId);
-    setEditText(currentText === 'Click edit to add commissioner analysis for this matchup...' ? '' : currentText);
+    setEditText(currentText);
   };
 
   const startEditingTeams = (matchupId: string, team1: string, team2: string) => {
