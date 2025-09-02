@@ -273,6 +273,14 @@ const Home = () => {
             );
           })}
         </div>
+        <img
+          src="/images/barn-draft.jpg"
+          alt="2B Fantasy Football Barn Draft"
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            e.currentTarget.src = 'https://images.pexels.com/photos/1260727/pexels-photo-1260727.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
+          }}
+        />
       </div>
     </div>
   );
