@@ -13,16 +13,19 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: false
+  },
+  db: {
+    schema: 'public'
   }
 });
 
 // Test the connection
-supabase.from('deadlines').select('count', { count: 'exact', head: true })
-  .then(({ error, count }) => {
+supabase.from('deadlines').select('*').limit(1)
+  .then(({ data, error }) => {
     if (error) {
       console.error('Supabase connection test failed:', error);
     } else {
-      console.log('Supabase connected successfully. Deadlines table has', count, 'rows');
+      console.log('Supabase connected successfully. Sample data:', data);
     }
   });
 

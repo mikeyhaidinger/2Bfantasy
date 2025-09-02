@@ -45,6 +45,20 @@ const Home = () => {
       console.log('Raw trade deadline input:', tradeDeadline);
       console.log('Raw keeper deadline input:', keeperDeadline);
       
+      // Test database connection first
+      console.log('Testing database connection...');
+      const { data: testData, error: testError } = await supabase
+        .from('deadlines')
+        .select('*')
+        .limit(1);
+      
+      if (testError) {
+        console.error('Database connection test failed:', testError);
+        throw new Error(`Database connection failed: ${testError.message}`);
+      }
+      
+      console.log('Database connection successful, current data:', testData);
+      
       // Handle trade deadline - only convert if we have a value
       let tradeDeadlineValue = null;
       if (tradeDeadline && tradeDeadline.trim() !== '') {
@@ -53,6 +67,7 @@ const Home = () => {
       
       console.log('Processed trade deadline:', tradeDeadlineValue);
       
+      console.log('Attempting to upsert trade deadline...');
       const { error: tradeError } = await supabase
         .from('deadlines')
         .upsert({
@@ -67,6 +82,8 @@ const Home = () => {
         console.error('Trade deadline error:', tradeError);
         throw tradeError;
       }
+      
+      console.log('Trade deadline upsert successful');
 
       // Handle keeper deadline - only convert if we have a value
       let keeperDeadlineValue = null;
@@ -76,6 +93,7 @@ const Home = () => {
       
       console.log('Processed keeper deadline:', keeperDeadlineValue);
       
+      console.log('Attempting to upsert keeper deadline...');
       const { error: keeperError } = await supabase
         .from('deadlines')
         .upsert({
@@ -90,13 +108,27 @@ const Home = () => {
         console.error('Keeper deadline error:', keeperError);
         throw keeperError;
       }
+      
+      console.log('Keeper deadline upsert successful');
+      
+      // Verify the data was actually saved
+      console.log('Verifying data was saved...');
+      const { data: verifyData, error: verifyError } = await supabase
+        .from('deadlines')
+        .select('*');
+      
+      if (verifyError) {
+        console.error('Verification failed:', verifyError);
+      } else {
+        console.log('Current database state after save:', verifyData);
+      }
 
       console.log('Deadlines saved successfully');
       setIsEditing(false);
       alert('Deadlines saved successfully!');
     } catch (error) {
       console.error('Error saving deadlines:', error);
-      alert(`Failed to save deadlines: ${error.message || error}`);
+      alert(`Failed to save deadlines: ${error?.message || error}`);
       // Only reload on error to restore original values
       loadDeadlines();
     } finally {
