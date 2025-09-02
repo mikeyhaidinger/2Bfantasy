@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { TrendingUp, FileText, Calendar, Zap, Trophy as TrophyIcon, Clock, Save } from 'lucide-react';
+import { TrendingUp, FileText, Calendar, Zap, Trophy as TrophyIcon, Clock, Save, X } from 'lucide-react';
 
 const Home = () => {
   const [tradeDeadline, setTradeDeadline] = React.useState('2025-12-04T20:15');
-  const [keeperDeadline, setKeeperDeadline] = React.useState('2025-08-15T23:59');
+  const [keeperDeadline, setKeeperDeadline] = React.useState('');
   const [isEditing, setIsEditing] = React.useState(false);
 
   const quickLinks = [
@@ -100,45 +100,79 @@ const Home = () => {
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
                   <h4 className="text-lg font-bold text-blue-900 mb-3">Trade Deadline</h4>
                   {isEditing ? (
-                    <input
-                      type="datetime-local"
-                      value={tradeDeadline}
-                      onChange={(e) => setTradeDeadline(e.target.value)}
-                      className="w-full p-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
+                    <div className="space-y-2">
+                      <input
+                        type="datetime-local"
+                        value={tradeDeadline}
+                        onChange={(e) => setTradeDeadline(e.target.value)}
+                        className="w-full p-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                      {tradeDeadline && (
+                        <button
+                          onClick={() => setTradeDeadline('')}
+                          className="flex items-center space-x-1 px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded text-sm transition-colors duration-200"
+                        >
+                          <X className="h-3 w-3" />
+                          <span>Clear</span>
+                        </button>
+                      )}
+                    </div>
                   ) : (
-                    <p className="text-blue-800 text-lg font-semibold">
-                      {new Date(tradeDeadline).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit'
-                      })}
-                    </p>
+                    <div>
+                      {tradeDeadline ? (
+                        <p className="text-blue-800 text-lg font-semibold">
+                          {new Date(tradeDeadline).toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      ) : (
+                        <p className="text-blue-600 italic">No deadline set</p>
+                      )}
+                    </div>
                   )}
                 </div>
                 <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-200">
                   <h4 className="text-lg font-bold text-emerald-900 mb-3">Keeper Deadline</h4>
                   {isEditing ? (
-                    <input
-                      type="datetime-local"
-                      value={keeperDeadline}
-                      onChange={(e) => setKeeperDeadline(e.target.value)}
-                      className="w-full p-3 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    />
+                    <div className="space-y-2">
+                      <input
+                        type="datetime-local"
+                        value={keeperDeadline}
+                        onChange={(e) => setKeeperDeadline(e.target.value)}
+                        className="w-full p-3 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      />
+                      {keeperDeadline && (
+                        <button
+                          onClick={() => setKeeperDeadline('')}
+                          className="flex items-center space-x-1 px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded text-sm transition-colors duration-200"
+                        >
+                          <X className="h-3 w-3" />
+                          <span>Clear</span>
+                        </button>
+                      )}
+                    </div>
                   ) : (
-                    <p className="text-emerald-800 text-lg font-semibold">
-                      {new Date(keeperDeadline).toLocaleDateString('en-US', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit'
-                      })}
-                    </p>
+                    <div>
+                      {keeperDeadline ? (
+                        <p className="text-emerald-800 text-lg font-semibold">
+                          {new Date(keeperDeadline).toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      ) : (
+                        <p className="text-emerald-600 italic">No deadline set</p>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
