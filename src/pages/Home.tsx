@@ -80,7 +80,7 @@ const Home = () => {
             Deadlines
           </h2>
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/50 max-w-4xl mx-auto">
-            <div className="bg-gradient-to-r from-orange-600 to-red-600 px-6 py-4">
+            <div className="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold text-white flex items-center">
                   <Clock className="h-5 w-5 mr-2" />
