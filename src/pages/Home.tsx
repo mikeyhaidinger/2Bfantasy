@@ -129,32 +129,39 @@ const Home = () => {
 
   const quickLinks = [
     {
-      title: 'Standings',
-      description: 'View current league standings and team records',
+      title: 'Power Rankings',
+      description: 'Commissioner matchup analysis and predictions',
       icon: TrendingUp,
-      path: '/standings',
+      path: '/power-rankings',
       color: 'bg-gradient-to-br from-blue-500 to-blue-600'
     },
     {
-      title: 'Draft Results',
-      description: 'Review draft picks and team rosters',
+      title: 'League Rules',
+      description: 'Official rules and regulations',
       icon: FileText,
-      path: '/draft',
+      path: '/rules',
       color: 'bg-gradient-to-br from-green-500 to-green-600'
     },
     {
-      title: 'Schedule',
-      description: 'Check upcoming games and matchups',
+      title: 'Draft Results',
+      description: 'Complete draft board and team rosters',
       icon: Calendar,
-      path: '/schedule',
+      path: '/draft',
       color: 'bg-gradient-to-br from-purple-500 to-purple-600'
     },
     {
-      title: 'Trades',
-      description: 'View trade history and proposals',
+      title: 'Punishments',
+      description: 'Sacko punishments and hall of shame',
       icon: Zap,
-      path: '/trades',
+      path: '/punishments',
       color: 'bg-gradient-to-br from-orange-500 to-orange-600'
+    },
+    {
+      title: 'History',
+      description: 'Past champions and league records',
+      icon: TrophyIcon,
+      path: '/history',
+      color: 'bg-gradient-to-br from-red-500 to-red-600'
     }
   ];
 
