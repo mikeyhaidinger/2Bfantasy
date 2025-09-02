@@ -42,85 +42,55 @@ const Home = () => {
     try {
       setLoading(true);
       
-      console.log('Saving deadlines...');
-      console.log('Trade deadline:', tradeDeadline);
-      console.log('Keeper deadline:', keeperDeadline);
-      
-      // Handle trade deadline - only convert if we have a value
-      let tradeDeadlineValue = null;
-      if (tradeDeadline && tradeDeadline.trim() !== '') {
-        tradeDeadlineValue = new Date(tradeDeadline).toISOString();
-      }
-      
-      // Handle keeper deadline - only convert if we have a value
-      let keeperDeadlineValue = null;
-      if (keeperDeadline && keeperDeadline.trim() !== '') {
-        keeperDeadlineValue = new Date(keeperDeadline).toISOString();
-      }
+      // First, ensure records exist by using upsert
+      const tradeDeadlineValue = tradeDeadline ? new Date(tradeDeadline).toISOString() : null;
+      const keeperDeadlineValue = keeperDeadline ? new Date(keeperDeadline).toISOString() : null;
 
-      console.log('Processed values:', { tradeDeadlineValue, keeperDeadlineValue });
+      console.log('Saving deadlines:', { tradeDeadlineValue, keeperDeadlineValue });
 
-      // Try a different approach - update existing records instead of upsert
-      const { data: existingData, error: fetchError } = await supabase
+      // Upsert trade deadline
+      const { data: tradeData, error: tradeError } = await supabase
         .from('deadlines')
-        .select('*');
-
-      if (fetchError) {
-        console.error('Error fetching existing deadlines:', fetchError);
-        throw fetchError;
-      }
-
-      console.log('Existing deadlines:', existingData);
-
-      // Update trade deadline
-      const { error: tradeError } = await supabase
-        .from('deadlines')
-        .update({
+        .upsert({
+          type: 'trade',
           deadline: tradeDeadlineValue,
           updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'type'
         })
-        .eq('type', 'trade');
-      
+        .select();
+
       if (tradeError) {
         console.error('Trade deadline error:', tradeError);
         throw tradeError;
       }
-      
-      console.log('Trade deadline updated successfully');
 
-      // Update keeper deadline
-      const { error: keeperError } = await supabase
+      console.log('Trade deadline saved:', tradeData);
+
+      // Upsert keeper deadline
+      const { data: keeperData, error: keeperError } = await supabase
         .from('deadlines')
-        .update({
+        .upsert({
+          type: 'keeper',
           deadline: keeperDeadlineValue,
           updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'type'
         })
-        .eq('type', 'keeper');
-      
+        .select();
+
       if (keeperError) {
         console.error('Keeper deadline error:', keeperError);
         throw keeperError;
       }
-      
-      console.log('Keeper deadline updated successfully');
-      
-      // Verify the data was actually saved
-      const { data: verifyData, error: verifyError } = await supabase
-        .from('deadlines')
-        .select('*');
-      
-      if (verifyError) {
-        console.error('Verification failed:', verifyError);
-      } else {
-        console.log('Current database state after save:', verifyData);
-      }
 
-      console.log('Deadlines saved successfully');
+      console.log('Keeper deadline saved:', keeperData);
+
       setIsEditing(false);
+      alert('Deadlines saved successfully!');
     } catch (error) {
       console.error('Error saving deadlines:', error);
-      alert(`Failed to save deadlines: ${error.message || error}`);
-      // Only reload on error to restore original values
+      alert(`Failed to save deadlines: ${error.message}`);
       loadDeadlines();
     } finally {
       setLoading(false);
@@ -212,7 +182,7 @@ const Home = () => {
                     <button
                       onClick={() => {
                         setIsEditing(false);
-                        loadDeadlines(); // Restore original values when canceling
+                        loadDeadlines();
                       }}
                       className="flex items-center space-x-1 px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors duration-200"
                     >
