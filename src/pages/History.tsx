@@ -189,7 +189,7 @@ const History = () => {
                 </div>
               ))}
             </div>
-          </div>
+        <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-red-600 bg-clip-text text-transparent mb-4">League History</h1>
         </div>
       </div>
     </div>
