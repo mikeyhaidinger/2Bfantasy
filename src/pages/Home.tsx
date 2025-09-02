@@ -110,32 +110,6 @@ const Home = () => {
       color: 'bg-gradient-to-br from-orange-500 to-orange-600'
     },
     {
-      title: 'Trophy Room',
-      description: 'League champions and awards',
-      icon: TrophyIcon,
-      path: '/trophies',
-      color: 'bg-gradient-to-br from-yellow-500 to-yellow-600'
-    },
-    {
-      title: 'Keepers',
-      description: 'Manage keeper selections',
-      icon: Clock,
-      path: '/keepers',
-      color: 'bg-gradient-to-br from-red-500 to-red-600'
-    }
-  ];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      <div className="relative h-64 overflow-hidden">
-        <img
-          src="/images/barn-draft.jpg"
-          alt="Barn Draft - 2B Fantasy Football League"
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.currentTarget.src = 'https://images.pexels.com/photos/158826/structure-light-ceiling-architecture-158826.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
-          }}
-        />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
