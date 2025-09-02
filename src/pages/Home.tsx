@@ -127,16 +127,37 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      {/* Full Barn Draft Image */}
-      <div className="w-full">
+      {/* Hero Section */}
+      <div className="relative h-96 overflow-hidden">
         <img
           src="/images/barn-draft.jpg"
           alt="Barn Draft - 2B Fantasy Football League"
-          className="w-full h-auto object-cover"
+          className="w-full h-full object-cover"
           onError={(e) => {
             e.currentTarget.src = 'https://images.pexels.com/photos/158826/structure-light-ceiling-architecture-158826.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
           }}
         />
+        <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-red-700 to-red-800 bg-opacity-80"></div>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center text-white">
+            <h1 className="text-6xl font-bold mb-4 drop-shadow-2xl">2B Fantasy Football</h1>
+            <p className="text-xl mb-8 drop-shadow-lg">Where legends are made and friendships are tested</p>
+            <div className="space-x-4">
+              <Link
+                to="/power-rankings"
+                className="bg-white text-red-600 px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors duration-300 shadow-lg"
+              >
+                Power Rankings
+              </Link>
+              <Link
+                to="/draft"
+                className="border-2 border-white text-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-red-600 transition-colors duration-300"
+              >
+                2025 Draft
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
