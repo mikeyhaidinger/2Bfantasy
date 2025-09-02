@@ -26,16 +26,14 @@ const Home = () => {
       const keeperDeadlineData = data.find((d: Deadline) => d.type === 'keeper');
 
       if (tradeDeadlineData?.deadline) {
-        // Convert UTC time to local time for display
+        // Display as EST - just format the stored datetime for input
         const tradeDate = new Date(tradeDeadlineData.deadline);
-        const localTradeDate = new Date(tradeDate.getTime() - tradeDate.getTimezoneOffset() * 60000);
-        setTradeDeadline(localTradeDate.toISOString().slice(0, 16));
+        setTradeDeadline(tradeDate.toISOString().slice(0, 16));
       }
       if (keeperDeadlineData?.deadline) {
-        // Convert UTC time to local time for display
+        // Display as EST - just format the stored datetime for input
         const keeperDate = new Date(keeperDeadlineData.deadline);
-        const localKeeperDate = new Date(keeperDate.getTime() - keeperDate.getTimezoneOffset() * 60000);
-        setKeeperDeadline(localKeeperDate.toISOString().slice(0, 16));
+        setKeeperDeadline(keeperDate.toISOString().slice(0, 16));
       }
     } catch (error) {
       console.error('Error loading deadlines:', error);
@@ -48,11 +46,9 @@ const Home = () => {
     try {
       setLoading(true);
       
-      // Convert local time to UTC for storage
-      const tradeDeadlineValue = tradeDeadline ? 
-        new Date(new Date(tradeDeadline).getTime() + new Date(tradeDeadline).getTimezoneOffset() * 60000).toISOString() : null;
-      const keeperDeadlineValue = keeperDeadline ? 
-        new Date(new Date(keeperDeadline).getTime() + new Date(keeperDeadline).getTimezoneOffset() * 60000).toISOString() : null;
+      // Save as EST - store exactly what user entered
+      const tradeDeadlineValue = tradeDeadline ? new Date(tradeDeadline).toISOString() : null;
+      const keeperDeadlineValue = keeperDeadline ? new Date(keeperDeadline).toISOString() : null;
 
       // Upsert trade deadline - this will insert if not exists, update if exists
       const { error: tradeError } = await supabase
@@ -235,8 +231,9 @@ const Home = () => {
                             month: 'long',
                             day: 'numeric',
                             hour: 'numeric',
-                            minute: '2-digit'
-                          })}
+                            minute: '2-digit',
+                            timeZone: 'America/New_York'
+                          })} EST
                         </p>
                       ) : (
                         <p className="text-blue-600 italic">No deadline set</p>
@@ -274,8 +271,9 @@ const Home = () => {
                             month: 'long',
                             day: 'numeric',
                             hour: 'numeric',
-                            minute: '2-digit'
-                          })}
+                            minute: '2-digit',
+                            timeZone: 'America/New_York'
+                          })} EST
                         </p>
                       ) : (
                         <p className="text-emerald-600 italic">No deadline set</p>
