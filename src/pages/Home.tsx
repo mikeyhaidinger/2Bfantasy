@@ -114,7 +114,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-slate-50 to-indigo-50 py-16">
+      <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-red-600 bg-clip-text text-transparent mb-12">
             2B Fantasy Football
