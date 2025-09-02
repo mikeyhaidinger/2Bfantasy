@@ -62,7 +62,7 @@ const History = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">League History</h1>
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-red-600 bg-clip-text text-transparent mb-4">League History</h1>
           <p className="text-xl text-gray-600">Celebrating our champions and memorable seasons</p>
         </div>
 
