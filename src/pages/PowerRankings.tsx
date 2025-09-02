@@ -16,10 +16,11 @@ interface LocalMatchup {
 interface WeekData {
   week: number;
   matchups: LocalMatchup[];
+  isComplete: boolean;
 }
 
 const PowerRankings = () => {
-  const [expandedWeeks, setExpandedWeeks] = useState<Set<number>>(new Set([1]));
+  const [expandedWeeks, setExpandedWeeks] = useState<Set<number>>(new Set());
   const [editingMatchup, setEditingMatchup] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
   const [editingTeams, setEditingTeams] = useState<string | null>(null);
@@ -28,6 +29,7 @@ const PowerRankings = () => {
   const [editingPrediction, setEditingPrediction] = useState<string | null>(null);
   const [predictionWinner, setPredictionWinner] = useState('');
   const [predictionMargin, setPredictionMargin] = useState('');
+  const [completedWeeks, setCompletedWeeks] = useState<Set<number>>(new Set());
 
   const [weeksData, setWeeksData] = useState<WeekData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,6 +38,16 @@ const PowerRankings = () => {
   React.useEffect(() => {
     loadMatchups();
   }, []);
+
+  // Auto-expand the first incomplete week when data loads
+  React.useEffect(() => {
+    if (weeksData.length > 0) {
+      const firstIncompleteWeek = weeksData.find(week => !week.isComplete);
+      if (firstIncompleteWeek) {
+        setExpandedWeeks(new Set([firstIncompleteWeek.week]));
+      }
+    }
+  }, [weeksData]);
 
   const loadMatchups = async () => {
     try {
@@ -72,7 +84,8 @@ const PowerRankings = () => {
       for (let weekNum = 1; weekNum <= 13; weekNum++) {
         weeks.push({
           week: weekNum,
-          matchups: weekGroups[weekNum] || []
+          matchups: weekGroups[weekNum] || [],
+          isComplete: false
         });
       }
       
@@ -93,6 +106,47 @@ const PowerRankings = () => {
     }
     setExpandedWeeks(newExpanded);
   };
+
+  const toggleWeekComplete = (weekNumber: number, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent the week from expanding/collapsing
+    
+    setWeeksData(weeks =>
+      weeks.map(week =>
+        week.week === weekNumber
+          ? { ...week, isComplete: !week.isComplete }
+          : week
+      )
+    );
+
+    // If marking as complete, close the week and open the next incomplete week
+    const updatedWeeks = weeksData.map(week =>
+      week.week === weekNumber
+        ? { ...week, isComplete: !week.isComplete }
+        : week
+    );
+
+    const weekBeingCompleted = updatedWeeks.find(w => w.week === weekNumber);
+    if (weekBeingCompleted?.isComplete) {
+      // Close the completed week
+      const newExpanded = new Set(expandedWeeks);
+      newExpanded.delete(weekNumber);
+      
+      // Find and open the next incomplete week
+      const nextIncompleteWeek = updatedWeeks.find(w => w.week > weekNumber && !w.isComplete);
+      if (nextIncompleteWeek) {
+        newExpanded.add(nextIncompleteWeek.week);
+      }
+      
+      setExpandedWeeks(newExpanded);
+    }
+  };
+
+  // Sort weeks: incomplete weeks first (by week number), then completed weeks at bottom
+  const sortedWeeks = [...weeksData].sort((a, b) => {
+    if (a.isComplete && !b.isComplete) return 1;
+    if (!a.isComplete && b.isComplete) return -1;
+    return a.week - b.week;
+  });
 
   const startEditing = (matchupId: string, currentText: string) => {
     setEditingMatchup(matchupId);
@@ -206,13 +260,26 @@ const PowerRankings = () => {
             </div>
           ) : (
           <>
-          {weeksData.map((week) => (
-            <div key={week.week} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/50">
+          {sortedWeeks.map((week) => (
+            <div key={week.week} className={`bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/50 ${week.isComplete ? 'opacity-75' : ''}`}>
               <button
                 onClick={() => toggleWeek(week.week)}
-                className="w-full px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white flex items-center justify-between transition-all duration-300"
+                className={`w-full px-6 py-4 ${week.isComplete ? 'bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700' : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700'} text-white flex items-center justify-between transition-all duration-300`}
               >
-                <h2 className="text-2xl font-bold">Week {week.week}</h2>
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={week.isComplete}
+                      onChange={(e) => toggleWeekComplete(week.week, e)}
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-5 h-5 text-emerald-600 bg-white border-2 border-white rounded focus:ring-emerald-500 focus:ring-2 mr-3"
+                    />
+                    <h2 className={`text-2xl font-bold ${week.isComplete ? 'line-through' : ''}`}>
+                      Week {week.week} {week.isComplete && '(Complete)'}
+                    </h2>
+                  </div>
+                </div>
                 {expandedWeeks.has(week.week) ? (
                   <ChevronUp className="h-6 w-6" />
                 ) : (
@@ -404,7 +471,8 @@ const PowerRankings = () => {
           <h3 className="text-lg font-bold text-indigo-900 mb-3">Commissioner Tools</h3>
           <p className="text-indigo-700 leading-relaxed">
             Click on team names to edit matchups, use the "Predict" button to add your win predictions with point margins, 
-            and use "Edit" to add detailed analysis for each matchup. ESPN integration coming soon for automatic matchup imports.
+            and use "Edit" to add detailed analysis for each matchup. Check the box next to a week to mark it as complete - 
+            completed weeks will move to the bottom and the next week will automatically open. ESPN integration coming soon for automatic matchup imports.
           </p>
         </div>
       </div>
