@@ -138,7 +138,7 @@ const Home = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Deadlines Section */}
         <div className="bg-white rounded-2xl shadow-xl mb-12 overflow-hidden border border-gray-200">
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
+          <div className="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4">
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-bold text-white flex items-center">
                 <Clock className="h-6 w-6 mr-2" />
