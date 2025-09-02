@@ -157,6 +157,7 @@ const Home = () => {
                   <span>{isEditing ? 'Save' : 'Edit'}</span>
                 </button>
                 {isEditing && (
+                <>
                   <button
                     onClick={() => {
                       setIsEditing(false);
@@ -167,6 +168,7 @@ const Home = () => {
                     <X className="h-4 w-4" />
                     <span>Cancel</span>
                   </button>
+                </>
                 )}
               </div>
             </div>

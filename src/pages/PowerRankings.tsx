@@ -204,6 +204,7 @@ const PowerRankings = () => {
               <p className="text-gray-600 mt-4 text-lg">Loading matchups...</p>
             </div>
           ) : (
+          <>
           {weeksData.map((week) => (
             <div key={week.week} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/50">
               <button
@@ -394,6 +395,7 @@ const PowerRankings = () => {
               )}
             </div>
           ))}
+          </>
           )}
         </div>
 
