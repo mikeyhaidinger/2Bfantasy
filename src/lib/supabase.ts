@@ -44,6 +44,7 @@ export interface Matchup {
   writeup: string;
   prediction_winner: string | null;
   prediction_margin: number | null;
+  is_complete: boolean;
   created_at: string;
   updated_at: string;
 }

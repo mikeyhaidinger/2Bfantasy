@@ -29,7 +29,6 @@ const PowerRankings = () => {
   const [editingPrediction, setEditingPrediction] = useState<string | null>(null);
   const [predictionWinner, setPredictionWinner] = useState('');
   const [predictionMargin, setPredictionMargin] = useState('');
-  const [completedWeeks, setCompletedWeeks] = useState<Set<number>>(new Set());
 
   const [weeksData, setWeeksData] = useState<WeekData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,10 +60,12 @@ const PowerRankings = () => {
 
       // Group matchups by week
       const weekGroups: { [key: number]: LocalMatchup[] } = {};
+      const weekCompletionStatus: { [key: number]: boolean } = {};
       
       data.forEach((matchup: Matchup) => {
         if (!weekGroups[matchup.week]) {
           weekGroups[matchup.week] = [];
+          weekCompletionStatus[matchup.week] = matchup.is_complete;
         }
         
         weekGroups[matchup.week].push({
@@ -85,7 +86,7 @@ const PowerRankings = () => {
         weeks.push({
           week: weekNum,
           matchups: weekGroups[weekNum] || [],
-          isComplete: false
+          isComplete: weekCompletionStatus[weekNum] || false
         });
       }
       
@@ -107,39 +108,61 @@ const PowerRankings = () => {
     setExpandedWeeks(newExpanded);
   };
 
-  const toggleWeekComplete = (weekNumber: number, event: React.MouseEvent) => {
+  const toggleWeekComplete = async (weekNumber: number, event: React.MouseEvent) => {
     event.stopPropagation(); // Prevent the week from expanding/collapsing
     
-    setWeeksData(weeks =>
-      weeks.map(week =>
-        week.week === weekNumber
-          ? { ...week, isComplete: !week.isComplete }
-          : week
-      )
-    );
+    const currentWeek = weeksData.find(w => w.week === weekNumber);
+    if (!currentWeek) return;
+    
+    const newIsComplete = !currentWeek.isComplete;
+    
+    try {
+      // Update all matchups for this week in the database
+      const { error } = await supabase
+        .from('matchups')
+        .update({ 
+          is_complete: newIsComplete,
+          updated_at: new Date().toISOString()
+        })
+        .eq('week', weekNumber);
 
-    // If marking as complete, close the week and open the next incomplete week
-    const updatedWeeks = weeksData.map(week =>
-      week.week === weekNumber
-        ? { ...week, isComplete: !week.isComplete }
-        : week
-    );
+      if (error) throw error;
 
-    const weekBeingCompleted = updatedWeeks.find(w => w.week === weekNumber);
-    if (weekBeingCompleted?.isComplete) {
-      // Close the completed week
-      const newExpanded = new Set(expandedWeeks);
-      newExpanded.delete(weekNumber);
-      
-      // Find and open the next incomplete week
-      const nextIncompleteWeek = updatedWeeks.find(w => w.week > weekNumber && !w.isComplete);
-      if (nextIncompleteWeek) {
-        newExpanded.add(nextIncompleteWeek.week);
+      // Update local state
+      setWeeksData(weeks =>
+        weeks.map(week =>
+          week.week === weekNumber
+            ? { ...week, isComplete: newIsComplete }
+            : week
+        )
+      );
+
+      // If marking as complete, close the week and open the next incomplete week
+      if (newIsComplete) {
+        // Close the completed week
+        const newExpanded = new Set(expandedWeeks);
+        newExpanded.delete(weekNumber);
+        
+        // Find and open the next incomplete week
+        const updatedWeeks = weeksData.map(week =>
+          week.week === weekNumber
+            ? { ...week, isComplete: newIsComplete }
+            : week
+        );
+        
+        const nextIncompleteWeek = updatedWeeks.find(w => w.week > weekNumber && !w.isComplete);
+        if (nextIncompleteWeek) {
+          newExpanded.add(nextIncompleteWeek.week);
+        }
+        
+        setExpandedWeeks(newExpanded);
       }
-      
-      setExpandedWeeks(newExpanded);
+    } catch (error) {
+      console.error('Error updating week completion status:', error);
+      alert('Failed to update week completion status. Please try again.');
     }
   };
+
 
   // Sort weeks: incomplete weeks first (by week number), then completed weeks at bottom
   const sortedWeeks = [...weeksData].sort((a, b) => {
