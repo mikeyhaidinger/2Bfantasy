@@ -1,6 +1,25 @@
 import React, { useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
 
+const HighlightedText = ({ text, searchTerm }: { text: string; searchTerm: string }) => {
+  if (!searchTerm) return <span>{text}</span>;
+
+  const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
+  return (
+    <span>
+      {parts.map((part, index) => 
+        part.toLowerCase() === searchTerm.toLowerCase() ? (
+          <mark key={index} className="bg-yellow-200 text-yellow-900 px-1 rounded font-semibold">
+            {part}
+          </mark>
+        ) : (
+          <span key={index}>{part}</span>
+        )
+      )}
+    </span>
+  );
+};
+
 const LeagueRules = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -150,8 +169,12 @@ const LeagueRules = () => {
               <div className="space-y-4">
                 {category.items.map((rule, ruleIndex) => (
                   <div key={ruleIndex} className="border-l-4 border-indigo-300 pl-6 py-2">
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{rule.title}</h3>
-                    <p className="text-gray-700 leading-relaxed">{rule.content}</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                      <HighlightedText text={rule.title} searchTerm={searchTerm} />
+                    </h3>
+                    <p className="text-gray-700 leading-relaxed">
+                      <HighlightedText text={rule.content} searchTerm={searchTerm} />
+                    </p>
                   </div>
                 ))}
               </div>
