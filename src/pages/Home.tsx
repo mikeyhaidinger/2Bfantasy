@@ -171,96 +171,96 @@ const Home = () => {
               </div>
             </div>
             <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
-                  <h4 className="text-lg font-bold text-blue-900 mb-3">Trade Deadline</h4>
-                  {isEditing ? (
-                    <div className="space-y-2">
-                      <input
-                        type="datetime-local"
-                        value={tradeDeadline}
-                        onChange={(e) => setTradeDeadline(e.target.value)}
-                        className="w-full p-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                      {tradeDeadline && (
-                        <button
-                          onClick={() => setTradeDeadline('')}
-                          className="flex items-center space-x-1 px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded text-sm transition-colors duration-200"
-                        >
-                          <X className="h-3 w-3" />
-                          <span>Clear</span>
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    <div>
-                      {tradeDeadline ? (
-                        <p className="text-blue-800 text-lg font-semibold">
-                          {new Date(tradeDeadline).toLocaleDateString('en-US', {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit'
-                          })}
-                        </p>
-                      ) : (
-                        <p className="text-blue-600 italic">No deadline set</p>
-                      )}
-                    </div>
-                  )}
+              {loading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
+                  <p className="text-gray-600 mt-2">Loading deadlines...</p>
                 </div>
-                <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-200">
-                  <h4 className="text-lg font-bold text-emerald-900 mb-3">Keeper Deadline</h4>
-                  {isEditing ? (
-                    <div className="space-y-2">
-                      <input
-                        type="datetime-local"
-                        value={keeperDeadline}
-                        onChange={(e) => setKeeperDeadline(e.target.value)}
-                        className="w-full p-3 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                      />
-                      {keeperDeadline && (
-                        <button
-                          onClick={() => setKeeperDeadline('')}
-                          className="flex items-center space-x-1 px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded text-sm transition-colors duration-200"
-                        >
-                          <X className="h-3 w-3" />
-                          <span>Clear</span>
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    <div>
-                      {keeperDeadline ? (
-                        <p className="text-emerald-800 text-lg font-semibold">
-                          {new Date(keeperDeadline).toLocaleDateString('en-US', {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit'
-                          })}
-                        </p>
-                      ) : (
-                        <p className="text-emerald-600 italic">No deadline set</p>
-                      )}
-                    </div>
-                  )}
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                    <h4 className="text-lg font-bold text-blue-900 mb-3">Trade Deadline</h4>
+                    {isEditing ? (
+                      <div className="space-y-2">
+                        <input
+                          type="datetime-local"
+                          value={tradeDeadline}
+                          onChange={(e) => setTradeDeadline(e.target.value)}
+                          className="w-full p-3 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        {tradeDeadline && (
+                          <button
+                            onClick={() => setTradeDeadline('')}
+                            className="flex items-center space-x-1 px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded text-sm transition-colors duration-200"
+                          >
+                            <X className="h-3 w-3" />
+                            <span>Clear</span>
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <div>
+                        {tradeDeadline ? (
+                          <p className="text-blue-800 text-lg font-semibold">
+                            {new Date(tradeDeadline).toLocaleDateString('en-US', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        ) : (
+                          <p className="text-blue-600 italic">No deadline set</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-200">
+                    <h4 className="text-lg font-bold text-emerald-900 mb-3">Keeper Deadline</h4>
+                    {isEditing ? (
+                      <div className="space-y-2">
+                        <input
+                          type="datetime-local"
+                          value={keeperDeadline}
+                          onChange={(e) => setKeeperDeadline(e.target.value)}
+                          className="w-full p-3 border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        />
+                        {keeperDeadline && (
+                          <button
+                            onClick={() => setKeeperDeadline('')}
+                            className="flex items-center space-x-1 px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded text-sm transition-colors duration-200"
+                          >
+                            <X className="h-3 w-3" />
+                            <span>Clear</span>
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      <div>
+                        {keeperDeadline ? (
+                          <p className="text-emerald-800 text-lg font-semibold">
+                            {new Date(keeperDeadline).toLocaleDateString('en-US', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        ) : (
+                          <p className="text-emerald-600 italic">No deadline set</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
-            )}
           </div>
-          <div className="p-6">
-            {loading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
-                <p className="text-gray-600 mt-2">Loading deadlines...</p>
-              </div>
-            ) : (
+        </div>
 
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
           League Central
