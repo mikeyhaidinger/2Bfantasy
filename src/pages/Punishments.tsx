@@ -21,7 +21,7 @@ const Punishments = () => {
 
   const currentSacko = {
     name: 'Dave Voitek - Central Saudi Scammers',
-    image: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop'
+    image: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop'
   };
 
   const pastSackos = [
