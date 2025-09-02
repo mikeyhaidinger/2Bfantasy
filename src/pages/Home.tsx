@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { TrendingUp, FileText, Calendar, Zap, Trophy as TrophyIcon, Clock, Save } from 'lucide-react';
 
 const Home = () => {
-  const [tradeDeadline, setTradeDeadline] = React.useState('2025-11-15T23:59');
+  const [tradeDeadline, setTradeDeadline] = React.useState('2025-12-04T20:15');
   const [keeperDeadline, setKeeperDeadline] = React.useState('2025-08-15T23:59');
   const [isEditing, setIsEditing] = React.useState(false);
 
