@@ -42,21 +42,10 @@ const Home = () => {
     try {
       setLoading(true);
       
-      // First, ensure records exist by using upsert
       const tradeDeadlineValue = tradeDeadline ? new Date(tradeDeadline).toISOString() : null;
       const keeperDeadlineValue = keeperDeadline ? new Date(keeperDeadline).toISOString() : null;
 
-      console.log('Saving deadlines:', { tradeDeadlineValue, keeperDeadlineValue });
-
-      // Check what's currently in the database
-      const { data: currentData, error: fetchError } = await supabase
-        .from('deadlines')
-        .select('*');
-      
-      console.log('Current deadlines in DB:', currentData);
-      if (fetchError) console.error('Fetch error:', fetchError);
-      // Upsert trade deadline
-      console.log('Attempting to save trade deadline...');
+      // Upsert trade deadline (using exact same logic as keeper)
       const { data: tradeData, error: tradeError } = await supabase
         .from('deadlines')
         .upsert({
@@ -68,17 +57,9 @@ const Home = () => {
         })
         .select();
 
-      if (tradeError) {
-        console.error('Trade deadline error:', tradeError);
-        console.error('Trade deadline error details:', JSON.stringify(tradeError, null, 2));
-        alert(`Trade deadline error: ${tradeError.message}`);
-      } else {
-        console.log('Trade deadline saved successfully:', tradeData);
-      }
+      if (tradeError) throw tradeError;
 
-
-      // Upsert keeper deadline
-      console.log('Attempting to save keeper deadline...');
+      // Upsert keeper deadline (same logic)
       const { data: keeperData, error: keeperError } = await supabase
         .from('deadlines')
         .upsert({
@@ -90,29 +71,13 @@ const Home = () => {
         })
         .select();
 
-      if (keeperError) {
-        console.error('Keeper deadline error:', keeperError);
-        console.error('Keeper deadline error details:', JSON.stringify(keeperError, null, 2));
-        alert(`Keeper deadline error: ${keeperError.message}`);
-      } else {
-        console.log('Keeper deadline saved successfully:', keeperData);
-      }
+      if (keeperError) throw keeperError;
 
-      // Verify what's actually in the database after save
-      const { data: verifyData, error: verifyError } = await supabase
-        .from('deadlines')
-        .select('*');
-      
-      console.log('Deadlines after save:', verifyData);
-      if (verifyError) console.error('Verify error:', verifyError);
-
-      if (!tradeError && !keeperError) {
-        setIsEditing(false);
-        alert('Deadlines saved successfully!');
-      }
+      setIsEditing(false);
+      alert('Deadlines saved successfully!');
     } catch (error) {
       console.error('Error saving deadlines:', error);
-      alert(`Failed to save deadlines: ${error.message}`);
+      alert(`Failed to save deadlines: ${error?.message || 'Unknown error'}`);
       loadDeadlines();
     } finally {
       setLoading(false);
