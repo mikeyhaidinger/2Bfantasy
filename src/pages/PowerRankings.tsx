@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Edit, Save, X, Target } from 'lucide-react';
+import { supabase, type Matchup } from '../lib/supabase';
 
-interface Matchup {
+interface LocalMatchup {
   id: string;
   team1: string;
   team2: string;
@@ -14,7 +15,7 @@ interface Matchup {
 
 interface WeekData {
   week: number;
-  matchups: Matchup[];
+  matchups: LocalMatchup[];
 }
 
 const PowerRankings = () => {
@@ -28,148 +29,60 @@ const PowerRankings = () => {
   const [predictionWinner, setPredictionWinner] = useState('');
   const [predictionMargin, setPredictionMargin] = useState('');
 
-  // Initialize all weeks 1-13 at once
-  const [weeksData, setWeeksData] = useState<WeekData[]>(() => {
-    const weeks: WeekData[] = [];
-    for (let weekNum = 1; weekNum <= 13; weekNum++) {
-      let matchups: Matchup[] = [];
+  const [weeksData, setWeeksData] = useState<WeekData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load matchups from Supabase
+  React.useEffect(() => {
+    loadMatchups();
+  }, []);
+
+  const loadMatchups = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('matchups')
+        .select('*')
+        .order('week', { ascending: true })
+        .order('matchup_id', { ascending: true });
+
+      if (error) throw error;
+
+      // Group matchups by week
+      const weekGroups: { [key: number]: LocalMatchup[] } = {};
       
-      if (weekNum === 1) {
-        matchups = [
-          { id: '1-1', team1: 'Team Gone Jawnson', team2: 'Jersey Shore Supplements', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '1-2', team1: 'Maui Mooseknuckles', team2: 'NJ Old School', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '1-3', team1: 'The Silverbacks', team2: 'Calamari Ballsrings', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '1-4', team1: 'The Pancake Football Team', team2: 'Zweeg', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '1-5', team1: 'Pink Sock', team2: 'Sonalika Scorchers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '1-6', team1: 'Maine Course', team2: 'Central Saudi Scammers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
-      } else if (weekNum === 2) {
-        matchups = [
-          { id: '2-1', team1: 'Team Gone Jawnson', team2: 'NJ Old School', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '2-2', team1: 'Jersey Shore Supplements', team2: 'Calamari Ballsrings', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '2-3', team1: 'Maui Mooseknuckles', team2: 'Zweeg', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '2-4', team1: 'The Silverbacks', team2: 'Sonalika Scorchers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '2-5', team1: 'The Pancake Football Team', team2: 'Pink Sock', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '2-6', team1: 'Central Saudi Scammers', team2: 'Maine Course', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
-      } else if (weekNum === 3) {
-        matchups = [
-          { id: '3-1', team1: 'The Silverbacks', team2: 'Jersey Shore Supplements', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '3-2', team1: 'Central Saudi Scammers', team2: 'Sonalika Scorchers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '3-3', team1: 'Zweeg', team2: 'Maine Course', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '3-4', team1: 'Pink Sock', team2: 'Calamari Ballsrings', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '3-5', team1: 'Team Gone Jawnson', team2: 'Maui Mooseknuckles', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '3-6', team1: 'The Pancake Football Team', team2: 'NJ Old School', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
-      } else if (weekNum === 4) {
-        matchups = [
-          { id: '4-1', team1: 'Pink Sock', team2: 'Maui Mooseknuckles', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '4-2', team1: 'Jersey Shore Supplements', team2: 'Maine Course', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '4-3', team1: 'The Silverbacks', team2: 'The Pancake Football Team', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '4-4', team1: 'Calamari Ballsrings', team2: 'Sonalika Scorchers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '4-5', team1: 'NJ Old School', team2: 'Central Saudi Scammers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '4-6', team1: 'Zweeg', team2: 'Team Gone Jawnson', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
-      } else if (weekNum === 5) {
-        matchups = [
-          { id: '5-1', team1: 'Calamari Ballsrings', team2: 'Maine Course', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '5-2', team1: 'Pink Sock', team2: 'NJ Old School', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '5-3', team1: 'The Silverbacks', team2: 'Maui Mooseknuckles', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '5-4', team1: 'The Pancake Football Team', team2: 'Jersey Shore Supplements', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '5-5', team1: 'Sonalika Scorchers', team2: 'Team Gone Jawnson', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '5-6', team1: 'Central Saudi Scammers', team2: 'Zweeg', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
-      } else if (weekNum === 6) {
-        matchups = [
-          { id: '6-1', team1: 'Calamari Ballsrings', team2: 'The Pancake Football Team', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '6-2', team1: 'Team Gone Jawnson', team2: 'Central Saudi Scammers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '6-3', team1: 'Maine Course', team2: 'Sonalika Scorchers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '6-4', team1: 'Pink Sock', team2: 'Zweeg', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '6-5', team1: 'NJ Old School', team2: 'The Silverbacks', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '6-6', team1: 'Maui Mooseknuckles', team2: 'Jersey Shore Supplements', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
-      } else if (weekNum === 7) {
-        matchups = [
-          { id: '7-1', team1: 'The Silverbacks', team2: 'Zweeg', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '7-2', team1: 'Calamari Ballsrings', team2: 'Maui Mooseknuckles', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '7-3', team1: 'The Pancake Football Team', team2: 'Sonalika Scorchers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '7-4', team1: 'Team Gone Jawnson', team2: 'Maine Course', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '7-5', team1: 'Central Saudi Scammers', team2: 'Pink Sock', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '7-6', team1: 'NJ Old School', team2: 'Jersey Shore Supplements', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
-      } else if (weekNum === 8) {
-        matchups = [
-          { id: '8-1', team1: 'The Silverbacks', team2: 'Central Saudi Scammers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '8-2', team1: 'Maine Course', team2: 'The Pancake Football Team', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '8-3', team1: 'NJ Old School', team2: 'Calamari Ballsrings', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '8-4', team1: 'Pink Sock', team2: 'Team Gone Jawnson', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '8-5', team1: 'Sonalika Scorchers', team2: 'Maui Mooseknuckles', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '8-6', team1: 'Zweeg', team2: 'Jersey Shore Supplements', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
-      } else if (weekNum === 9) {
-        matchups = [
-          { id: '9-1', team1: 'Jersey Shore Supplements', team2: 'Central Saudi Scammers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '9-2', team1: 'Team Gone Jawnson', team2: 'The Pancake Football Team', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '9-3', team1: 'Maui Mooseknuckles', team2: 'Maine Course', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '9-4', team1: 'Calamari Ballsrings', team2: 'Zweeg', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '9-5', team1: 'NJ Old School', team2: 'Sonalika Scorchers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '9-6', team1: 'Pink Sock', team2: 'The Silverbacks', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
-      } else if (weekNum === 10) {
-        matchups = [
-          { id: '10-1', team1: 'Team Gone Jawnson', team2: 'The Silverbacks', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '10-2', team1: 'Jersey Shore Supplements', team2: 'Pink Sock', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '10-3', team1: 'Central Saudi Scammers', team2: 'Calamari Ballsrings', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '10-4', team1: 'Maine Course', team2: 'NJ Old School', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '10-5', team1: 'Zweeg', team2: 'Sonalika Scorchers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '10-6', team1: 'Maui Mooseknuckles', team2: 'The Pancake Football Team', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
-      } else if (weekNum === 11) {
-        matchups = [
-          { id: '11-1', team1: 'Jersey Shore Supplements', team2: 'Sonalika Scorchers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '11-2', team1: 'Calamari Ballsrings', team2: 'Team Gone Jawnson', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '11-3', team1: 'NJ Old School', team2: 'Zweeg', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '11-4', team1: 'Pink Sock', team2: 'The Pancake Football Team', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '11-5', team1: 'Central Saudi Scammers', team2: 'Maui Mooseknuckles', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '11-6', team1: 'The Silverbacks', team2: 'Maine Course', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
-      } else if (weekNum === 12) {
-        matchups = [
-          { id: '12-1', team1: 'Team Gone Jawnson', team2: 'Jersey Shore Supplements', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '12-2', team1: 'Maui Mooseknuckles', team2: 'NJ Old School', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '12-3', team1: 'The Silverbacks', team2: 'Calamari Ballsrings', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '12-4', team1: 'The Pancake Football Team', team2: 'Zweeg', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '12-5', team1: 'Pink Sock', team2: 'Sonalika Scorchers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '12-6', team1: 'Maine Course', team2: 'Central Saudi Scammers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
-      } else if (weekNum === 13) {
-        matchups = [
-          { id: '13-1', team1: 'Team Gone Jawnson', team2: 'NJ Old School', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '13-2', team1: 'Jersey Shore Supplements', team2: 'Calamari Ballsrings', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '13-3', team1: 'Maui Mooseknuckles', team2: 'Zweeg', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '13-4', team1: 'The Silverbacks', team2: 'Sonalika Scorchers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '13-5', team1: 'The Pancake Football Team', team2: 'Central Saudi Scammers', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: '13-6', team1: 'Pink Sock', team2: 'Maine Course', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
-      } else {
-        // Default matchups for other weeks
-        matchups = [
-          { id: `${weekNum}-1`, team1: 'Team 1', team2: 'Team 2', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: `${weekNum}-2`, team1: 'Team 3', team2: 'Team 4', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: `${weekNum}-3`, team1: 'Team 5', team2: 'Team 6', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: `${weekNum}-4`, team1: 'Team 7', team2: 'Team 8', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: `${weekNum}-5`, team1: 'Team 9', team2: 'Team 10', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null },
-          { id: `${weekNum}-6`, team1: 'Team 11', team2: 'Team 12', writeup: 'Click edit to add commissioner analysis for this matchup...', prediction: null }
-        ];
+      data.forEach((matchup: Matchup) => {
+        if (!weekGroups[matchup.week]) {
+          weekGroups[matchup.week] = [];
+        }
+        
+        weekGroups[matchup.week].push({
+          id: matchup.matchup_id,
+          team1: matchup.team1,
+          team2: matchup.team2,
+          writeup: matchup.writeup,
+          prediction: matchup.prediction_winner && matchup.prediction_margin !== null ? {
+            winner: matchup.prediction_winner,
+            margin: matchup.prediction_margin
+          } : null
+        });
+      });
+
+      // Convert to WeekData array
+      const weeks: WeekData[] = [];
+      for (let weekNum = 1; weekNum <= 13; weekNum++) {
+        weeks.push({
+          week: weekNum,
+          matchups: weekGroups[weekNum] || []
+        });
       }
       
-      weeks.push({
-        week: weekNum,
-        matchups
-      });
+      setWeeksData(weeks);
+    } catch (error) {
+      console.error('Error loading matchups:', error);
+    } finally {
+      setLoading(false);
     }
-    return weeks;
-  });
+  };
 
   const toggleWeek = (week: number) => {
     const newExpanded = new Set(expandedWeeks);
@@ -199,68 +112,70 @@ const PowerRankings = () => {
   };
 
   const saveEdit = (weekNumber: number, matchupId: string) => {
-    setWeeksData(weeks =>
-      weeks.map(week => {
-        if (week.week === weekNumber) {
-          return {
-            ...week,
-            matchups: week.matchups.map(matchup => 
-              matchup.id === matchupId 
-                ? { ...matchup, writeup: editText }
-                : matchup
-            )
-          };
-        }
-        return week;
-      })
-    );
-    setEditingMatchup(null);
-    setEditText('');
+    updateMatchupInDatabase(matchupId, { writeup: editText });
   };
 
   const saveTeamEdit = (weekNumber: number, matchupId: string) => {
-    setWeeksData(weeks =>
-      weeks.map(week => {
-        if (week.week === weekNumber) {
-          return {
-            ...week,
-            matchups: week.matchups.map(matchup => 
-              matchup.id === matchupId 
-                ? { ...matchup, team1: editTeam1, team2: editTeam2 }
-                : matchup
-            )
-          };
-        }
-        return week;
-      })
-    );
-    setEditingTeams(null);
-    setEditTeam1('');
-    setEditTeam2('');
+    updateMatchupInDatabase(matchupId, { team1: editTeam1, team2: editTeam2 });
   };
 
   const savePredictionEdit = (weekNumber: number, matchupId: string) => {
     const margin = parseFloat(predictionMargin);
     if (predictionWinner && !isNaN(margin)) {
-      setWeeksData(weeks =>
-        weeks.map(week => {
-          if (week.week === weekNumber) {
-            return {
-              ...week,
-              matchups: week.matchups.map(matchup => 
-                matchup.id === matchupId 
-                  ? { ...matchup, prediction: { winner: predictionWinner, margin } }
-                  : matchup
-              )
-            };
-          }
-          return week;
-        })
-      );
+      updateMatchupInDatabase(matchupId, { 
+        prediction_winner: predictionWinner, 
+        prediction_margin: margin 
+      });
     }
-    setEditingPrediction(null);
-    setPredictionWinner('');
-    setPredictionMargin('');
+  };
+
+  const updateMatchupInDatabase = async (matchupId: string, updates: any) => {
+    try {
+      const { error } = await supabase
+        .from('matchups')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString()
+        })
+        .eq('matchup_id', matchupId);
+
+      if (error) throw error;
+
+      // Update local state
+      setWeeksData(weeks =>
+        weeks.map(week => ({
+          ...week,
+          matchups: week.matchups.map(matchup => {
+            if (matchup.id === matchupId) {
+              const updatedMatchup = { ...matchup };
+              if (updates.writeup !== undefined) updatedMatchup.writeup = updates.writeup;
+              if (updates.team1 !== undefined) updatedMatchup.team1 = updates.team1;
+              if (updates.team2 !== undefined) updatedMatchup.team2 = updates.team2;
+              if (updates.prediction_winner !== undefined && updates.prediction_margin !== undefined) {
+                updatedMatchup.prediction = {
+                  winner: updates.prediction_winner,
+                  margin: updates.prediction_margin
+                };
+              }
+              return updatedMatchup;
+            }
+            return matchup;
+          })
+        }))
+      );
+
+      // Clear editing states
+      setEditingMatchup(null);
+      setEditText('');
+      setEditingTeams(null);
+      setEditTeam1('');
+      setEditTeam2('');
+      setEditingPrediction(null);
+      setPredictionWinner('');
+      setPredictionMargin('');
+    } catch (error) {
+      console.error('Error updating matchup:', error);
+    }
   };
 
   const cancelEdit = () => {
@@ -283,6 +198,12 @@ const PowerRankings = () => {
         </div>
 
         <div className="space-y-6">
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+              <p className="text-gray-600 mt-4 text-lg">Loading matchups...</p>
+            </div>
+          ) : (
           {weeksData.map((week) => (
             <div key={week.week} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/50">
               <button
@@ -473,6 +394,7 @@ const PowerRankings = () => {
               )}
             </div>
           ))}
+          )}
         </div>
 
         <div className="mt-12 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-2xl p-8 shadow-lg">

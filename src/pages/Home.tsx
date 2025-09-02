@@ -1,11 +1,74 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { TrendingUp, FileText, Calendar, Zap, Trophy as TrophyIcon, Clock, Save, X } from 'lucide-react';
+import { supabase, type Deadline } from '../lib/supabase';
 
 const Home = () => {
-  const [tradeDeadline, setTradeDeadline] = React.useState('2025-12-04T20:15');
+  const [tradeDeadline, setTradeDeadline] = React.useState('');
   const [keeperDeadline, setKeeperDeadline] = React.useState('');
   const [isEditing, setIsEditing] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
+
+  // Load deadlines from Supabase
+  React.useEffect(() => {
+    loadDeadlines();
+  }, []);
+
+  const loadDeadlines = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('deadlines')
+        .select('*');
+
+      if (error) throw error;
+
+      const tradeDeadlineData = data.find((d: Deadline) => d.type === 'trade');
+      const keeperDeadlineData = data.find((d: Deadline) => d.type === 'keeper');
+
+      if (tradeDeadlineData?.deadline) {
+        setTradeDeadline(new Date(tradeDeadlineData.deadline).toISOString().slice(0, 16));
+      }
+      if (keeperDeadlineData?.deadline) {
+        setKeeperDeadline(new Date(keeperDeadlineData.deadline).toISOString().slice(0, 16));
+      }
+    } catch (error) {
+      console.error('Error loading deadlines:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveDeadlines = async () => {
+    try {
+      // Update trade deadline
+      const tradeDeadlineValue = tradeDeadline ? new Date(tradeDeadline).toISOString() : null;
+      await supabase
+        .from('deadlines')
+        .upsert({
+          type: 'trade',
+          deadline: tradeDeadlineValue,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'type'
+        });
+
+      // Update keeper deadline
+      const keeperDeadlineValue = keeperDeadline ? new Date(keeperDeadline).toISOString() : null;
+      await supabase
+        .from('deadlines')
+        .upsert({
+          type: 'keeper',
+          deadline: keeperDeadlineValue,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'type'
+        });
+
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error saving deadlines:', error);
+    }
+  };
 
   const quickLinks = [
     {
@@ -87,12 +150,24 @@ const Home = () => {
                   Important Dates
                 </h3>
                 <button
-                  onClick={() => setIsEditing(!isEditing)}
+                  onClick={() => isEditing ? saveDeadlines() : setIsEditing(true)}
                   className="flex items-center space-x-2 px-3 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200"
                 >
                   {isEditing ? <Save className="h-4 w-4" /> : <Calendar className="h-4 w-4" />}
                   <span>{isEditing ? 'Save' : 'Edit'}</span>
                 </button>
+                {isEditing && (
+                  <button
+                    onClick={() => {
+                      setIsEditing(false);
+                      loadDeadlines(); // Reset to original values
+                    }}
+                    className="flex items-center space-x-2 px-3 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200"
+                  >
+                    <X className="h-4 w-4" />
+                    <span>Cancel</span>
+                  </button>
+                )}
               </div>
             </div>
             <div className="p-6">
@@ -177,8 +252,15 @@ const Home = () => {
                 </div>
               </div>
             </div>
+            )}
           </div>
-        </div>
+          <div className="p-6">
+            {loading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
+                <p className="text-gray-600 mt-2">Loading deadlines...</p>
+              </div>
+            ) : (
 
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
           League Central
