@@ -113,6 +113,28 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-slate-50 to-indigo-50 py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-red-600 bg-clip-text text-transparent mb-12">
+            2B Fantasy Football
+          </h1>
+          <div className="flex justify-center mb-6">
+            <div className="bg-white rounded-2xl shadow-xl p-4 border border-white/50">
+              <img
+                src="/images/barn-draft.jpg"
+                alt="2B Fantasy Football Barn Draft"
+                className="w-96 h-64 object-cover rounded-xl"
+                onError={(e) => {
+                  e.currentTarget.src = 'https://images.pexels.com/photos/1260727/pexels-photo-1260727.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
+                }}
+              />
+            </div>
+          </div>
+          <p className="text-2xl font-semibold text-gray-700">2025 Barn Draft</p>
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Deadlines Section */}
         <div className="bg-white rounded-2xl shadow-xl mb-12 overflow-hidden border border-gray-200">
@@ -273,14 +295,6 @@ const Home = () => {
             );
           })}
         </div>
-        <img
-          src="/images/barn-draft.jpg"
-          alt="2B Fantasy Football Barn Draft"
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.currentTarget.src = 'https://images.pexels.com/photos/1260727/pexels-photo-1260727.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1';
-          }}
-        />
       </div>
     </div>
   );
