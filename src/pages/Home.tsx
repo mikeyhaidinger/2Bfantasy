@@ -55,10 +55,7 @@ const Home = () => {
           onConflict: 'type'
         });
       
-      if (tradeError) {
-        console.error('Error saving trade deadline:', tradeError);
-        throw tradeError;
-      }
+      if (tradeError) throw tradeError;
 
       // Handle keeper deadline
       const keeperDeadlineValue = keeperDeadline ? new Date(keeperDeadline).toISOString() : null;
@@ -73,16 +70,15 @@ const Home = () => {
           onConflict: 'type'
         });
       
-      if (keeperError) {
-        console.error('Error saving keeper deadline:', keeperError);
-        throw keeperError;
-      }
+      if (keeperError) throw keeperError;
 
       setIsEditing(false);
-      console.log('Deadlines saved successfully');
+      
+      // Reload the data to confirm it was saved
+      await loadDeadlines();
     } catch (error) {
       console.error('Error saving deadlines:', error);
-      alert(`Failed to save deadlines: ${error.message}`);
+      alert(`Failed to save deadlines: ${error?.message || 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
@@ -167,15 +163,40 @@ const Home = () => {
                   <Clock className="h-5 w-5 mr-2" />
                   Important Dates
                 </h3>
-                <button
-                  onClick={() => isEditing ? saveDeadlines() : setIsEditing(true)}
-                  className="flex items-center space-x-2 px-3 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200"
-                >
-                  {isEditing ? <Save className="h-4 w-4" /> : <Calendar className="h-4 w-4" />}
-                  <span>{isEditing ? 'Save' : 'Edit'}</span>
-                </button>
-                {isEditing && (
-                <>
+                <div className="flex items-center space-x-2">
+                  {isEditing ? (
+                    <>
+                      <button
+                        onClick={saveDeadlines}
+                        disabled={loading}
+                        className="flex items-center space-x-2 px-3 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200 disabled:opacity-50"
+                      >
+                        <Save className="h-4 w-4" />
+                        <span>{loading ? 'Saving...' : 'Save'}</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setIsEditing(false);
+                          loadDeadlines(); // Reset to original values
+                        }}
+                        className="flex items-center space-x-2 px-3 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200"
+                      >
+                        <X className="h-4 w-4" />
+                        <span>Cancel</span>
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="flex items-center space-x-2 px-3 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200"
+                    >
+                      <Calendar className="h-4 w-4" />
+                      <span>Edit</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
                   <button
                     onClick={() => {
                       setIsEditing(false);
