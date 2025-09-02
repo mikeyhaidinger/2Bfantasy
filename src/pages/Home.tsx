@@ -26,10 +26,16 @@ const Home = () => {
       const keeperDeadlineData = data.find((d: Deadline) => d.type === 'keeper');
 
       if (tradeDeadlineData?.deadline) {
-        setTradeDeadline(new Date(tradeDeadlineData.deadline).toISOString().slice(0, 16));
+        // Convert UTC time to local time for display
+        const tradeDate = new Date(tradeDeadlineData.deadline);
+        const localTradeDate = new Date(tradeDate.getTime() - tradeDate.getTimezoneOffset() * 60000);
+        setTradeDeadline(localTradeDate.toISOString().slice(0, 16));
       }
       if (keeperDeadlineData?.deadline) {
-        setKeeperDeadline(new Date(keeperDeadlineData.deadline).toISOString().slice(0, 16));
+        // Convert UTC time to local time for display
+        const keeperDate = new Date(keeperDeadlineData.deadline);
+        const localKeeperDate = new Date(keeperDate.getTime() - keeperDate.getTimezoneOffset() * 60000);
+        setKeeperDeadline(localKeeperDate.toISOString().slice(0, 16));
       }
     } catch (error) {
       console.error('Error loading deadlines:', error);
@@ -42,8 +48,11 @@ const Home = () => {
     try {
       setLoading(true);
       
-      const tradeDeadlineValue = tradeDeadline ? new Date(tradeDeadline).toISOString() : null;
-      const keeperDeadlineValue = keeperDeadline ? new Date(keeperDeadline).toISOString() : null;
+      // Convert local time to UTC for storage
+      const tradeDeadlineValue = tradeDeadline ? 
+        new Date(new Date(tradeDeadline).getTime() + new Date(tradeDeadline).getTimezoneOffset() * 60000).toISOString() : null;
+      const keeperDeadlineValue = keeperDeadline ? 
+        new Date(new Date(keeperDeadline).getTime() + new Date(keeperDeadline).getTimezoneOffset() * 60000).toISOString() : null;
 
       // Upsert trade deadline - this will insert if not exists, update if exists
       const { error: tradeError } = await supabase
