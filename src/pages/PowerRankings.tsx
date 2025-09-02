@@ -112,7 +112,8 @@ const PowerRankings = () => {
   };
 
   const saveEdit = (weekNumber: number, matchupId: string) => {
-    updateMatchupInDatabase(matchupId, { writeup: editText });
+    const textToSave = editText.trim() === '' ? 'Click edit to add commissioner analysis for this matchup...' : editText;
+    updateMatchupInDatabase(matchupId, { writeup: textToSave });
   };
 
   const saveTeamEdit = (weekNumber: number, matchupId: string) => {
