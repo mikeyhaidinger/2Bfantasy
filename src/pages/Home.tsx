@@ -98,31 +98,6 @@ const Home = () => {
           })}
         </div>
       </div>
-
-      {/* Current Season Stats */}
-      <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-20 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full filter blur-3xl"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-r from-pink-500/10 to-orange-500/10 rounded-full filter blur-3xl"></div>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-center mb-16 bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">2025 Season</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="text-center bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-              <div className="text-5xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent mb-3">Week 1</div>
-              <div className="text-gray-300">Current Week</div>
-            </div>
-            <div className="text-center bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-              <div className="text-5xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-3">12</div>
-              <div className="text-gray-300">Teams</div>
-            </div>
-            <div className="text-center bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-              <div className="text-5xl font-bold bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent mb-3">0</div>
-              <div className="text-gray-300">Games Played</div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
