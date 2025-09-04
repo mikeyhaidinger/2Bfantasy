@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GripVertical, Edit, Save, X, Trophy, TrendingUp, Medal, Award } from 'lucide-react';
+import { supabase, type PowerRanking } from '../lib/supabase';
 
 interface TeamRanking {
   id: string;
@@ -9,20 +10,8 @@ interface TeamRanking {
 }
 
 const TeamPowerRankings = () => {
-  const [teams, setTeams] = useState<TeamRanking[]>([
-    { id: '1', name: 'The Silverbacks', rank: 1, writeup: 'Click edit to add power ranking analysis for this team...' },
-    { id: '2', name: 'Team Gone Jawnson', rank: 2, writeup: 'Click edit to add power ranking analysis for this team...' },
-    { id: '3', name: 'Pink Sock', rank: 3, writeup: 'Click edit to add power ranking analysis for this team...' },
-    { id: '4', name: 'The Pancake Football Team', rank: 4, writeup: 'Click edit to add power ranking analysis for this team...' },
-    { id: '5', name: 'Zweeg', rank: 5, writeup: 'Click edit to add power ranking analysis for this team...' },
-    { id: '6', name: 'Maui Mooseknuckles', rank: 6, writeup: 'Click edit to add power ranking analysis for this team...' },
-    { id: '7', name: 'NJ Old School', rank: 7, writeup: 'Click edit to add power ranking analysis for this team...' },
-    { id: '8', name: 'Central Saudi Scammers', rank: 8, writeup: 'Click edit to add power ranking analysis for this team...' },
-    { id: '9', name: 'Jersey Shore Supplements', rank: 9, writeup: 'Click edit to add power ranking analysis for this team...' },
-    { id: '10', name: 'Calamari Ballsrings', rank: 10, writeup: 'Click edit to add power ranking analysis for this team...' },
-    { id: '11', name: 'Sonalika Scorchers', rank: 11, writeup: 'Click edit to add power ranking analysis for this team...' },
-    { id: '12', name: 'Maine Course', rank: 12, writeup: 'Click edit to add power ranking analysis for this team...' }
-  ]);
+  const [teams, setTeams] = useState<TeamRanking[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [editingTeam, setEditingTeam] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
@@ -30,6 +19,85 @@ const TeamPowerRankings = () => {
   const [tempRank, setTempRank] = useState('');
   const [draggedItem, setDraggedItem] = useState<TeamRanking | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  // Load power rankings from database
+  useEffect(() => {
+    loadPowerRankings();
+  }, []);
+
+  const loadPowerRankings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('power_rankings')
+        .select('*')
+        .order('rank_position', { ascending: true });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        // Convert database records to local format
+        const loadedTeams = data.map((ranking: PowerRanking) => ({
+          id: ranking.id,
+          name: ranking.team_name,
+          rank: ranking.rank_position,
+          writeup: ranking.writeup
+        }));
+        setTeams(loadedTeams);
+      } else {
+        // Initialize with default teams if no data exists
+        await initializeDefaultTeams();
+      }
+    } catch (error) {
+      console.error('Error loading power rankings:', error);
+      // Fallback to default teams on error
+      await initializeDefaultTeams();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const initializeDefaultTeams = async () => {
+    const defaultTeams = [
+      'The Silverbacks', 'Team Gone Jawnson', 'Pink Sock', 'The Pancake Football Team',
+      'Zweeg', 'Maui Mooseknuckles', 'NJ Old School', 'Central Saudi Scammers',
+      'Jersey Shore Supplements', 'Calamari Ballsrings', 'Sonalika Scorchers', 'Maine Course'
+    ];
+
+    try {
+      const teamsToInsert = defaultTeams.map((teamName, index) => ({
+        team_name: teamName,
+        rank_position: index + 1,
+        writeup: 'Click edit to add power ranking analysis for this team...'
+      }));
+
+      const { data, error } = await supabase
+        .from('power_rankings')
+        .insert(teamsToInsert)
+        .select();
+
+      if (error) throw error;
+
+      if (data) {
+        const loadedTeams = data.map((ranking: PowerRanking) => ({
+          id: ranking.id,
+          name: ranking.team_name,
+          rank: ranking.rank_position,
+          writeup: ranking.writeup
+        }));
+        setTeams(loadedTeams);
+      }
+    } catch (error) {
+      console.error('Error initializing default teams:', error);
+      // Set local state as fallback
+      const fallbackTeams = defaultTeams.map((teamName, index) => ({
+        id: (index + 1).toString(),
+        name: teamName,
+        rank: index + 1,
+        writeup: 'Click edit to add power ranking analysis for this team...'
+      }));
+      setTeams(fallbackTeams);
+    }
+  };
 
   // Sort teams by rank whenever teams state changes
   const sortedTeams = [...teams].sort((a, b) => a.rank - b.rank);
@@ -46,9 +114,7 @@ const TeamPowerRankings = () => {
 
   const saveEdit = (teamId: string) => {
     const textToSave = editText.trim() === '' ? 'Click edit to add power ranking analysis for this team...' : editText;
-    setTeams(teams.map(team => 
-      team.id === teamId ? { ...team, writeup: textToSave } : team
-    ));
+    updateTeamInDatabase(teamId, { writeup: textToSave });
     setEditingTeam(null);
     setEditText('');
   };
@@ -56,25 +122,92 @@ const TeamPowerRankings = () => {
   const saveRankEdit = (teamId: string) => {
     const newRank = parseInt(tempRank);
     if (newRank >= 1 && newRank <= 12) {
-      // Update the team's rank and reorder all teams
-      const updatedTeams = teams.map(team => {
-        if (team.id === teamId) {
-          return { ...team, rank: newRank };
-        }
-        return team;
-      });
-
-      // Sort by rank and reassign sequential ranks to handle duplicates
-      const sortedUpdatedTeams = updatedTeams.sort((a, b) => a.rank - b.rank);
-      const finalTeams = sortedUpdatedTeams.map((team, index) => ({
-        ...team,
-        rank: index + 1
-      }));
-
-      setTeams(finalTeams);
+      updateTeamRankInDatabase(teamId, newRank);
     }
     setEditingRank(null);
     setTempRank('');
+  };
+
+  const updateTeamInDatabase = async (teamId: string, updates: { writeup?: string; rank_position?: number }) => {
+    try {
+      const { error } = await supabase
+        .from('power_rankings')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', teamId);
+
+      if (error) throw error;
+
+      // Update local state
+      setTeams(teams.map(team => {
+        if (team.id === teamId) {
+          const updatedTeam = { ...team };
+          if (updates.writeup !== undefined) updatedTeam.writeup = updates.writeup;
+          if (updates.rank_position !== undefined) updatedTeam.rank = updates.rank_position;
+          return updatedTeam;
+        }
+        return team;
+      }));
+    } catch (error) {
+      console.error('Error updating team:', error);
+      alert('Failed to save changes. Please try again.');
+    }
+  };
+
+  const updateTeamRankInDatabase = async (teamId: string, newRank: number) => {
+    try {
+      // First, update the team's rank
+      const { error: updateError } = await supabase
+        .from('power_rankings')
+        .update({
+          rank_position: newRank,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', teamId);
+
+      if (updateError) throw updateError;
+
+      // Reload all rankings to get the correct order
+      await loadPowerRankings();
+    } catch (error) {
+      console.error('Error updating team rank:', error);
+      alert('Failed to update ranking. Please try again.');
+    }
+  };
+
+  const updateAllTeamRanks = async (updatedTeams: TeamRanking[]) => {
+    try {
+      // Update all teams with their new ranks
+      const updates = updatedTeams.map((team, index) => ({
+        id: team.id,
+        rank_position: index + 1,
+        updated_at: new Date().toISOString()
+      }));
+
+      for (const update of updates) {
+        const { error } = await supabase
+          .from('power_rankings')
+          .update({
+            rank_position: update.rank_position,
+            updated_at: update.updated_at
+          })
+          .eq('id', update.id);
+
+        if (error) throw error;
+      }
+
+      // Update local state
+      const finalTeams = updatedTeams.map((team, index) => ({
+        ...team,
+        rank: index + 1
+      }));
+      setTeams(finalTeams);
+    } catch (error) {
+      console.error('Error updating team ranks:', error);
+      alert('Failed to update rankings. Please try again.');
+    }
   };
 
   const cancelEdit = () => {
@@ -111,13 +244,8 @@ const TeamPowerRankings = () => {
     const [removed] = newTeams.splice(dragIndex, 1);
     newTeams.splice(dropIndex, 0, removed);
 
-    // Update ranks based on new positions
-    const updatedTeams = newTeams.map((team, index) => ({
-      ...team,
-      rank: index + 1
-    }));
-
-    setTeams(updatedTeams);
+    // Update all team ranks in database
+    updateAllTeamRanks(newTeams);
     setDraggedItem(null);
     setDragOverIndex(null);
   };
@@ -153,8 +281,14 @@ const TeamPowerRankings = () => {
           <p className="text-xl text-gray-600">Commissioner's weekly team power rankings and analysis</p>
         </div>
 
-        <div className="space-y-3">
-          {sortedTeams.map((team, index) => (
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <p className="text-gray-600 mt-4 text-lg">Loading power rankings...</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {sortedTeams.map((team, index) => (
             <div
               key={team.id}
               draggable
@@ -278,7 +412,8 @@ const TeamPowerRankings = () => {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
 
         {/* Commissioner Tools */}
         <div className="mt-8 bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-2xl p-6 shadow-xl">

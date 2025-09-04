@@ -51,3 +51,12 @@ export interface Matchup {
   created_at: string;
   updated_at: string;
 }
+
+export interface PowerRanking {
+  id: string;
+  team_name: string;
+  rank_position: number;
+  writeup: string;
+  created_at: string;
+  updated_at: string;
+}
