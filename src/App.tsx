@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import Home from './pages/Home';
 import PowerRankings from './pages/PowerRankings';
+import TeamPowerRankings from './pages/TeamPowerRankings';
 import LeagueRules from './pages/LeagueRules';
 import Draft from './pages/Draft';
 import Punishments from './pages/Punishments';
@@ -17,6 +18,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/power-rankings" element={<PowerRankings />} />
+            <Route path="/team-power-rankings" element={<TeamPowerRankings />} />
             <Route path="/rules" element={<LeagueRules />} />
             <Route path="/draft" element={<Draft />} />
             <Route path="/punishments" element={<Punishments />} />

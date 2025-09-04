@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Edit, Save, X, Target } from 'lucide-react';
+import { ChevronDown, ChevronUp, Edit, Save, X, Target, GripVertical } from 'lucide-react';
 import { supabase, type Matchup } from '../lib/supabase';
 
 interface LocalMatchup {

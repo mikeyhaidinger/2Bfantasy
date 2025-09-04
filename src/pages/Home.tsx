@@ -107,6 +107,13 @@ const Home = () => {
       color: 'bg-gradient-to-br from-blue-500 to-blue-600'
     },
     {
+      title: 'Power Rankings',
+      description: 'Team rankings and analysis',
+      icon: TrendingUp,
+      path: '/team-power-rankings',
+      color: 'bg-gradient-to-br from-indigo-500 to-indigo-600'
+    },
+    {
       title: 'League Rules',
       description: 'Official rules and regulations',
       icon: FileText,

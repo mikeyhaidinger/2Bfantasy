@@ -9,6 +9,7 @@ const Navigation = () => {
   const navItems = [
     { path: '/', label: 'Home' },
     { path: '/power-rankings', label: 'Predictions' },
+    { path: '/team-power-rankings', label: 'Power Rankings' },
     { path: '/rules', label: 'League Rules' },
     { path: '/draft', label: '2025 Draft' },
     { path: '/punishments', label: 'Punishments' },
