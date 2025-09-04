@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { GripVertical, Edit, Save, X, Trophy, TrendingUp } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { GripVertical, Edit, Save, X, Trophy, TrendingUp, Medal, Award } from 'lucide-react';
 
 interface TeamRanking {
   id: string;
@@ -26,12 +26,22 @@ const TeamPowerRankings = () => {
 
   const [editingTeam, setEditingTeam] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
+  const [editingRank, setEditingRank] = useState<string | null>(null);
+  const [tempRank, setTempRank] = useState('');
   const [draggedItem, setDraggedItem] = useState<TeamRanking | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  // Sort teams by rank whenever teams state changes
+  const sortedTeams = [...teams].sort((a, b) => a.rank - b.rank);
 
   const startEditing = (teamId: string, currentText: string) => {
     setEditingTeam(teamId);
     setEditText(currentText === 'Click edit to add power ranking analysis for this team...' ? '' : currentText);
+  };
+
+  const startEditingRank = (teamId: string, currentRank: number) => {
+    setEditingRank(teamId);
+    setTempRank(currentRank.toString());
   };
 
   const saveEdit = (teamId: string) => {
@@ -43,9 +53,35 @@ const TeamPowerRankings = () => {
     setEditText('');
   };
 
+  const saveRankEdit = (teamId: string) => {
+    const newRank = parseInt(tempRank);
+    if (newRank >= 1 && newRank <= 12) {
+      // Update the team's rank and reorder all teams
+      const updatedTeams = teams.map(team => {
+        if (team.id === teamId) {
+          return { ...team, rank: newRank };
+        }
+        return team;
+      });
+
+      // Sort by rank and reassign sequential ranks to handle duplicates
+      const sortedUpdatedTeams = updatedTeams.sort((a, b) => a.rank - b.rank);
+      const finalTeams = sortedUpdatedTeams.map((team, index) => ({
+        ...team,
+        rank: index + 1
+      }));
+
+      setTeams(finalTeams);
+    }
+    setEditingRank(null);
+    setTempRank('');
+  };
+
   const cancelEdit = () => {
     setEditingTeam(null);
     setEditText('');
+    setEditingRank(null);
+    setTempRank('');
   };
 
   const handleDragStart = (e: React.DragEvent, team: TeamRanking) => {
@@ -68,10 +104,10 @@ const TeamPowerRankings = () => {
     
     if (!draggedItem) return;
 
-    const dragIndex = teams.findIndex(team => team.id === draggedItem.id);
+    const dragIndex = sortedTeams.findIndex(team => team.id === draggedItem.id);
     if (dragIndex === dropIndex) return;
 
-    const newTeams = [...teams];
+    const newTeams = [...sortedTeams];
     const [removed] = newTeams.splice(dragIndex, 1);
     newTeams.splice(dropIndex, 0, removed);
 
@@ -86,29 +122,39 @@ const TeamPowerRankings = () => {
     setDragOverIndex(null);
   };
 
-  const getRankColor = (rank: number) => {
-    if (rank <= 3) return 'from-yellow-500 to-amber-500';
-    if (rank <= 6) return 'from-emerald-500 to-green-500';
-    if (rank <= 9) return 'from-blue-500 to-cyan-500';
-    return 'from-red-500 to-rose-500';
+  const getRankGradient = (rank: number) => {
+    if (rank === 1) return 'from-yellow-400 via-yellow-500 to-amber-500';
+    if (rank === 2) return 'from-gray-300 via-gray-400 to-gray-500';
+    if (rank === 3) return 'from-orange-400 via-orange-500 to-red-500';
+    if (rank <= 6) return 'from-emerald-400 via-emerald-500 to-green-600';
+    if (rank <= 9) return 'from-blue-400 via-blue-500 to-indigo-600';
+    return 'from-red-400 via-red-500 to-rose-600';
   };
 
   const getRankIcon = (rank: number) => {
-    if (rank === 1) return <Trophy className="h-6 w-6 text-yellow-300" />;
-    if (rank <= 3) return <TrendingUp className="h-6 w-6 text-white" />;
+    if (rank === 1) return <Trophy className="h-7 w-7 text-yellow-100 drop-shadow-lg" />;
+    if (rank === 2) return <Medal className="h-7 w-7 text-gray-100 drop-shadow-lg" />;
+    if (rank === 3) return <Award className="h-7 w-7 text-orange-100 drop-shadow-lg" />;
     return null;
+  };
+
+  const getRankBadge = (rank: number) => {
+    if (rank <= 3) return 'bg-gradient-to-r from-yellow-500 to-amber-600 text-white shadow-xl';
+    if (rank <= 6) return 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg';
+    if (rank <= 9) return 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg';
+    return 'bg-gradient-to-r from-red-500 to-rose-600 text-white shadow-lg';
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-red-600 bg-clip-text text-transparent mb-4">Power Rankings</h1>
           <p className="text-xl text-gray-600">Commissioner's weekly team power rankings and analysis</p>
         </div>
 
-        <div className="space-y-4">
-          {teams.map((team, index) => (
+        <div className="space-y-3">
+          {sortedTeams.map((team, index) => (
             <div
               key={team.id}
               draggable
@@ -116,52 +162,99 @@ const TeamPowerRankings = () => {
               onDragOver={(e) => handleDragOver(e, index)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, index)}
-              className={`bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/50 cursor-move transition-all duration-300 hover:shadow-2xl hover:scale-105 ${
-                dragOverIndex === index ? 'ring-4 ring-indigo-300 ring-opacity-50' : ''
-              } ${draggedItem?.id === team.id ? 'opacity-50' : ''}`}
+              className={`group bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden border border-white/60 cursor-move transition-all duration-300 hover:scale-[1.02] ${
+                dragOverIndex === index ? 'ring-4 ring-indigo-300 ring-opacity-50 scale-[1.02]' : ''
+              } ${draggedItem?.id === team.id ? 'opacity-50 scale-95' : ''}`}
             >
-              <div className={`bg-gradient-to-r ${getRankColor(team.rank)} px-6 py-4 flex items-center justify-between`}>
-                <div className="flex items-center space-x-4">
-                  <GripVertical className="h-6 w-6 text-white/80 hover:text-white cursor-grab active:cursor-grabbing" />
-                  <div className="bg-white/20 backdrop-blur-sm rounded-2xl w-16 h-16 flex items-center justify-center shadow-lg">
-                    {getRankIcon(team.rank) || (
-                      <span className="text-2xl font-bold text-white">{team.rank}</span>
-                    )}
+              {/* Sleek Header Banner */}
+              <div className={`bg-gradient-to-r ${getRankGradient(team.rank)} px-6 py-4 relative overflow-hidden`}>
+                {/* Background Pattern */}
+                <div className="absolute inset-0 bg-black/10 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:20px_20px]"></div>
+                
+                <div className="relative flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <GripVertical className="h-6 w-6 text-white/70 hover:text-white cursor-grab active:cursor-grabbing transition-colors duration-200" />
+                    
+                    {/* Rank Number - Editable */}
+                    <div className="flex items-center space-x-3">
+                      {editingRank === team.id ? (
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="number"
+                            min="1"
+                            max="12"
+                            value={tempRank}
+                            onChange={(e) => setTempRank(e.target.value)}
+                            className="w-16 h-12 text-center text-xl font-bold bg-white/20 backdrop-blur-sm border-2 border-white/30 rounded-xl text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                            onKeyPress={(e) => e.key === 'Enter' && saveRankEdit(team.id)}
+                            autoFocus
+                          />
+                          <button
+                            onClick={() => saveRankEdit(team.id)}
+                            className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-200"
+                          >
+                            <Save className="h-4 w-4 text-white" />
+                          </button>
+                          <button
+                            onClick={cancelEdit}
+                            className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors duration-200"
+                          >
+                            <X className="h-4 w-4 text-white" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div 
+                          onClick={() => startEditingRank(team.id, team.rank)}
+                          className="flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl shadow-xl cursor-pointer hover:bg-white/30 transition-all duration-200 hover:scale-110 group-hover:shadow-2xl"
+                        >
+                          {getRankIcon(team.rank) || (
+                            <span className="text-2xl font-bold text-white drop-shadow-lg">{team.rank}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Team Name */}
+                    <div>
+                      <h2 className="text-2xl font-bold text-white drop-shadow-lg">{team.name}</h2>
+                      <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold ${getRankBadge(team.rank)}`}>
+                        #{team.rank} • {team.rank <= 4 ? 'Playoff Bound' : team.rank <= 8 ? 'Bubble Team' : 'Needs Help'}
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">{team.name}</h2>
-                    <p className="text-white/80">Rank #{team.rank}</p>
-                  </div>
+
+                  {/* Edit Button */}
+                  <button
+                    onClick={() => startEditing(team.id, team.writeup)}
+                    className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-all duration-200 shadow-lg backdrop-blur-sm hover:scale-105"
+                  >
+                    <Edit className="h-4 w-4" />
+                    <span className="font-medium">Edit Analysis</span>
+                  </button>
                 </div>
-                <button
-                  onClick={() => startEditing(team.id, team.writeup)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200 shadow-md backdrop-blur-sm"
-                >
-                  <Edit className="h-4 w-4" />
-                  <span>Edit</span>
-                </button>
               </div>
 
+              {/* Content Area */}
               <div className="p-6">
                 {editingTeam === team.id ? (
                   <div className="space-y-4">
                     <textarea
                       value={editText}
                       onChange={(e) => setEditText(e.target.value)}
-                      className="w-full h-32 p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none bg-white shadow-inner"
+                      className="w-full h-32 p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none bg-white shadow-inner text-gray-700 placeholder-gray-400"
                       placeholder="Enter your power ranking analysis for this team..."
                     />
-                    <div className="flex space-x-2">
+                    <div className="flex space-x-3">
                       <button
                         onClick={() => saveEdit(team.id)}
-                        className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg transition-all duration-200 shadow-md"
+                        className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl font-medium"
                       >
                         <Save className="h-4 w-4" />
-                        <span>Save</span>
+                        <span>Save Analysis</span>
                       </button>
                       <button
                         onClick={cancelEdit}
-                        className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white rounded-lg transition-all duration-200 shadow-md"
+                        className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl font-medium"
                       >
                         <X className="h-4 w-4" />
                         <span>Cancel</span>
@@ -169,9 +262,9 @@ const TeamPowerRankings = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-6 border border-gray-100 shadow-inner">
+                  <div className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-6 border border-gray-100 shadow-inner hover:shadow-lg transition-shadow duration-200">
                     <p 
-                      className="text-gray-700 leading-relaxed whitespace-pre-wrap cursor-pointer hover:bg-gray-50 rounded-lg p-3 transition-colors duration-200 min-h-[60px] flex items-center"
+                      className="text-gray-700 leading-relaxed whitespace-pre-wrap cursor-pointer hover:bg-gray-50 rounded-lg p-4 transition-colors duration-200 min-h-[80px] flex items-center text-lg"
                       onClick={() => startEditing(team.id, team.writeup)}
                     >
                       {team.writeup === 'Click edit to add power ranking analysis for this team...' 
@@ -190,12 +283,30 @@ const TeamPowerRankings = () => {
           ))}
         </div>
 
-        <div className="mt-12 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-2xl p-8 shadow-lg">
-          <h3 className="text-lg font-bold text-indigo-900 mb-3">Commissioner Tools</h3>
-          <p className="text-indigo-700 leading-relaxed">
-            Drag and drop teams using the grip handle to reorder the power rankings. The rank numbers will automatically update based on position. 
-            Click "Edit" to add detailed analysis for each team's current performance, roster moves, and outlook.
-          </p>
+        {/* Commissioner Tools */}
+        <div className="mt-12 bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-2xl p-8 shadow-xl">
+          <h3 className="text-xl font-bold text-indigo-900 mb-4 flex items-center">
+            <Trophy className="h-6 w-6 mr-2" />
+            Commissioner Tools
+          </h3>
+          <div className="space-y-3 text-indigo-700">
+            <p className="flex items-start">
+              <span className="font-semibold mr-2">•</span>
+              <span><strong>Click rank numbers</strong> to edit and automatically reorder teams</span>
+            </p>
+            <p className="flex items-start">
+              <span className="font-semibold mr-2">•</span>
+              <span><strong>Drag teams</strong> using the grip handle to manually reorder rankings</span>
+            </p>
+            <p className="flex items-start">
+              <span className="font-semibold mr-2">•</span>
+              <span><strong>Click "Edit Analysis"</strong> to add detailed writeups for each team</span>
+            </p>
+            <p className="flex items-start">
+              <span className="font-semibold mr-2">•</span>
+              <span><strong>Color coding:</strong> Gold (1-3), Green (4-6), Blue (7-9), Red (10-12)</span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
