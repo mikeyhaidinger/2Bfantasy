@@ -175,7 +175,7 @@ const TeamPowerRankings = () => {
                   <div className="flex items-center space-x-4">
                     <GripVertical className="h-6 w-6 text-white/70 hover:text-white cursor-grab active:cursor-grabbing transition-colors duration-200" />
                     
-                    {/* Rank Number - Editable */}
+                    {/* Editable Rank Number Bubble */}
                     <div className="flex items-center space-x-3">
                       {editingRank === team.id ? (
                         <div className="flex items-center space-x-2">
@@ -185,7 +185,7 @@ const TeamPowerRankings = () => {
                             max="12"
                             value={tempRank}
                             onChange={(e) => setTempRank(e.target.value)}
-                            className="w-16 h-12 text-center text-xl font-bold bg-white/20 backdrop-blur-sm border-2 border-white/30 rounded-xl text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                            className="w-16 h-16 text-center text-2xl font-bold bg-white/20 backdrop-blur-sm border-2 border-white/30 rounded-full text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
                             onKeyPress={(e) => e.key === 'Enter' && saveRankEdit(team.id)}
                             autoFocus
                           />
@@ -205,7 +205,7 @@ const TeamPowerRankings = () => {
                       ) : (
                         <div 
                           onClick={() => startEditingRank(team.id, team.rank)}
-                          className="flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl shadow-xl cursor-pointer hover:bg-white/30 transition-all duration-200 hover:scale-110 group-hover:shadow-2xl"
+                          className="flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full shadow-xl cursor-pointer hover:bg-white/30 transition-all duration-200 hover:scale-110 group-hover:shadow-2xl"
                         >
                           {getRankIcon(team.rank) || (
                             <span className="text-2xl font-bold text-white drop-shadow-lg">{team.rank}</span>
@@ -217,9 +217,6 @@ const TeamPowerRankings = () => {
                     {/* Team Name */}
                     <div>
                       <h2 className="text-2xl font-bold text-white drop-shadow-lg">{team.name}</h2>
-                      <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-bold ${getRankBadge(team.rank)}`}>
-                        #{team.rank} • {team.rank <= 4 ? 'Playoff Bound' : team.rank <= 8 ? 'Bubble Team' : 'Needs Help'}
-                      </div>
                     </div>
                   </div>
 
