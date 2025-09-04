@@ -167,16 +167,16 @@ const TeamPowerRankings = () => {
               } ${draggedItem?.id === team.id ? 'opacity-50 scale-95' : ''}`}
             >
               {/* Sleek Header Banner */}
-              <div className={`bg-gradient-to-r ${getRankGradient(team.rank)} px-6 py-4 relative overflow-hidden`}>
+              <div className={`bg-gradient-to-r ${getRankGradient(team.rank)} px-4 py-2 relative overflow-hidden`}>
                 {/* Background Pattern */}
                 <div className="absolute inset-0 bg-black/10 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:20px_20px]"></div>
                 
                 <div className="relative flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-3">
                     <GripVertical className="h-6 w-6 text-white/70 hover:text-white cursor-grab active:cursor-grabbing transition-colors duration-200" />
                     
                     {/* Editable Rank Number Bubble */}
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-2">
                       {editingRank === team.id ? (
                         <div className="flex items-center space-x-2">
                           <input
@@ -185,7 +185,7 @@ const TeamPowerRankings = () => {
                             max="12"
                             value={tempRank}
                             onChange={(e) => setTempRank(e.target.value)}
-                            className="w-16 h-16 text-center text-2xl font-bold bg-white/20 backdrop-blur-sm border-2 border-white/30 rounded-full text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                            className="w-12 h-12 text-center text-lg font-bold bg-white/20 backdrop-blur-sm border-2 border-white/30 rounded-full text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
                             onKeyPress={(e) => e.key === 'Enter' && saveRankEdit(team.id)}
                             autoFocus
                           />
@@ -205,10 +205,10 @@ const TeamPowerRankings = () => {
                       ) : (
                         <div 
                           onClick={() => startEditingRank(team.id, team.rank)}
-                          className="flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full shadow-xl cursor-pointer hover:bg-white/30 transition-all duration-200 hover:scale-110 group-hover:shadow-2xl"
+                          className="flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full shadow-lg cursor-pointer hover:bg-white/30 transition-all duration-200 hover:scale-110"
                         >
                           {getRankIcon(team.rank) || (
-                            <span className="text-2xl font-bold text-white drop-shadow-lg">{team.rank}</span>
+                            <span className="text-lg font-bold text-white drop-shadow-lg">{team.rank}</span>
                           )}
                         </div>
                       )}
@@ -216,23 +216,23 @@ const TeamPowerRankings = () => {
 
                     {/* Team Name */}
                     <div>
-                      <h2 className="text-2xl font-bold text-white drop-shadow-lg">{team.name}</h2>
+                      <h2 className="text-xl font-bold text-white drop-shadow-lg">{team.name}</h2>
                     </div>
                   </div>
 
                   {/* Edit Button */}
                   <button
                     onClick={() => startEditing(team.id, team.writeup)}
-                    className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-all duration-200 shadow-lg backdrop-blur-sm hover:scale-105"
+                    className="flex items-center space-x-2 px-3 py-1 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-200 shadow-lg backdrop-blur-sm hover:scale-105"
                   >
                     <Edit className="h-4 w-4" />
-                    <span className="font-medium">Edit Analysis</span>
+                    <span className="font-medium text-sm">Edit</span>
                   </button>
                 </div>
               </div>
 
               {/* Content Area */}
-              <div className="p-6">
+              <div className="p-4">
                 {editingTeam === team.id ? (
                   <div className="space-y-4">
                     <textarea
@@ -261,7 +261,7 @@ const TeamPowerRankings = () => {
                 ) : (
                   <div className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-6 border border-gray-100 shadow-inner hover:shadow-lg transition-shadow duration-200">
                     <p 
-                      className="text-gray-700 leading-relaxed whitespace-pre-wrap cursor-pointer hover:bg-gray-50 rounded-lg p-4 transition-colors duration-200 min-h-[80px] flex items-center text-lg"
+                      className="text-gray-700 leading-relaxed whitespace-pre-wrap cursor-pointer hover:bg-gray-50 rounded-lg p-3 transition-colors duration-200 min-h-[60px] flex items-center"
                       onClick={() => startEditing(team.id, team.writeup)}
                     >
                       {team.writeup === 'Click edit to add power ranking analysis for this team...' 
@@ -281,7 +281,7 @@ const TeamPowerRankings = () => {
         </div>
 
         {/* Commissioner Tools */}
-        <div className="mt-12 bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-2xl p-8 shadow-xl">
+        <div className="mt-8 bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-2xl p-6 shadow-xl">
           <h3 className="text-xl font-bold text-indigo-900 mb-4 flex items-center">
             <Trophy className="h-6 w-6 mr-2" />
             Commissioner Tools
