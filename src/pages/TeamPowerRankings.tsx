@@ -312,7 +312,7 @@ const TeamPowerRankings = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-red-600 bg-clip-text text-transparent mb-4">Power Rankings</h1>
-          <p className="text-xl text-gray-600">Commissioner's weekly team power rankings and analysis</p>
+          <p className="text-xl text-gray-600">Commissioner's team power rankings and analysis</p>
         </div>
 
         {loading ? (
