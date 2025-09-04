@@ -158,30 +158,37 @@ const TeamPowerRankings = () => {
 
   const updateTeamRankInDatabase = async (teamId: string, newRank: number) => {
     try {
-      // Get current team data
+      // Get the current team and its old rank
       const currentTeam = teams.find(t => t.id === teamId);
       if (!currentTeam) return;
       
       const oldRank = currentTeam.rank;
+      if (oldRank === newRank) return; // No change needed
       
-      // Create new rankings array with proper bumping logic
-      const updatedTeams = teams.map(team => {
-        if (team.id === teamId) {
-          // This is the team being moved
-          return { ...team, rank: newRank };
-        } else if (oldRank < newRank) {
-          // Moving down: teams between old and new position move up
-          if (team.rank > oldRank && team.rank <= newRank) {
+      // Create a copy of teams array for manipulation
+      let updatedTeams = [...teams];
+      
+      if (oldRank < newRank) {
+        // Moving down (e.g., 1 → 6): shift teams up between old and new position
+        updatedTeams = updatedTeams.map(team => {
+          if (team.id === teamId) {
+            return { ...team, rank: newRank };
+          } else if (team.rank > oldRank && team.rank <= newRank) {
             return { ...team, rank: team.rank - 1 };
           }
-        } else if (oldRank > newRank) {
-          // Moving up: teams between new and old position move down
-          if (team.rank >= newRank && team.rank < oldRank) {
+          return team;
+        });
+      } else {
+        // Moving up (e.g., 6 → 1): shift teams down between new and old position
+        updatedTeams = updatedTeams.map(team => {
+          if (team.id === teamId) {
+            return { ...team, rank: newRank };
+          } else if (team.rank >= newRank && team.rank < oldRank) {
             return { ...team, rank: team.rank + 1 };
           }
-        }
-        return team;
-      });
+          return team;
+        });
+      }
       
       // Update all affected teams in the database
       for (const team of updatedTeams) {
