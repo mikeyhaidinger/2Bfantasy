@@ -100,7 +100,7 @@ const Home = () => {
 
   const quickLinks = [
     {
-      title: 'Power Rankings',
+      title: 'Weekly Predictions',
       description: 'Commissioner matchup analysis and predictions',
       icon: TrendingUp,
       path: '/power-rankings',
