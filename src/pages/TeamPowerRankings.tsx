@@ -158,19 +158,46 @@ const TeamPowerRankings = () => {
 
   const updateTeamRankInDatabase = async (teamId: string, newRank: number) => {
     try {
-      // First, update the team's rank
-      const { error: updateError } = await supabase
-        .from('power_rankings')
-        .update({
-          rank_position: newRank,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', teamId);
-
-      if (updateError) throw updateError;
-
-      // Reload all rankings to get the correct order
-      await loadPowerRankings();
+      // Get current team data
+      const currentTeam = teams.find(t => t.id === teamId);
+      if (!currentTeam) return;
+      
+      const oldRank = currentTeam.rank;
+      
+      // Create new rankings array with proper bumping logic
+      const updatedTeams = teams.map(team => {
+        if (team.id === teamId) {
+          // This is the team being moved
+          return { ...team, rank: newRank };
+        } else if (oldRank < newRank) {
+          // Moving down: teams between old and new position move up
+          if (team.rank > oldRank && team.rank <= newRank) {
+            return { ...team, rank: team.rank - 1 };
+          }
+        } else if (oldRank > newRank) {
+          // Moving up: teams between new and old position move down
+          if (team.rank >= newRank && team.rank < oldRank) {
+            return { ...team, rank: team.rank + 1 };
+          }
+        }
+        return team;
+      });
+      
+      // Update all affected teams in the database
+      for (const team of updatedTeams) {
+        const { error } = await supabase
+          .from('power_rankings')
+          .update({
+            rank_position: team.rank,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', team.id);
+          
+        if (error) throw error;
+      }
+      
+      // Update local state
+      setTeams(updatedTeams);
     } catch (error) {
       console.error('Error updating team rank:', error);
       alert('Failed to update ranking. Please try again.');
